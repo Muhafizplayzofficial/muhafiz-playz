@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+
+# Apna domain likhein (https:// ke saath):
+Sitemap: https://YOUR-DOMAIN.com/sitemap.xml
