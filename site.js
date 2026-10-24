@@ -73,7 +73,7 @@ $("#mb").onclick=()=>tg(true);dim.onclick=()=>tg(false);
 $("#sb").onclick=()=>{$("#sf").classList.toggle("on");$("#sf input").focus()};
 if(qs.get("q"))$("#sf").classList.add("on");
 const soc=[["facebook","Facebook"],["telegram","Telegram"],["youtube","YouTube"],["instagram","Instagram"],["twitter","X"],["tiktok","TikTok"]].filter(([k])=>S[k]).map(([k,v])=>`<a href="${esc(S[k])}" target="_blank" rel="noopener">${v}</a>`).join("");
-$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 3</p></footer>`;
+$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 4</p></footer>`;
 }
 const share=()=>{if(!T("show_share"))return"";const u=encodeURIComponent(location.href),t=encodeURIComponent(document.title);return`<div class="share"><a href="https://www.facebook.com/sharer/sharer.php?u=${u}" target="_blank" rel="noopener">Facebook</a><a href="https://twitter.com/intent/tweet?url=${u}&text=${t}" target="_blank" rel="noopener">X</a><a href="https://wa.me/?text=${t}%20${u}" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/share/url?url=${u}&text=${t}" target="_blank" rel="noopener">Telegram</a></div>`};
 
@@ -84,7 +84,6 @@ const latest=EPS.length?`<section class="sec"><h2>Latest Episodes</h2>${rows(EPS
 const dr=SER.slice(0,+S.dramas_count||20).map(s=>`<a class="dc" href="${sUrl(s)}">${pic(s.banner||s.poster,s.title)}<span>${esc(s.title)}</span></a><hr class="dsep">`).join("");
 let hc=S.home_content;if(!/^[ \t]*\[dramas\][ \t]*$/mi.test(hc))hc=withMarker(hc,"dramas");
 const main=`<section class="box prose" style="margin-top:0"><h1>${esc(S.home_title)}</h1>${compose(hc,m=>m==="dramas"?`<hr class="dsep">${dr}`:null)}</section>`+ad("content")+
-(T("show_articles")?SER.slice(0,+S.articles_count||6).map(s=>`<article class="art"><h2>${esc(s.title)} with Urdu Subtitles</h2><div class="prose">${md(intro(s))}</div><a class="btn" href="${sUrl(s)}">All ${esc(s.title)} Episodes</a></article>`).join(""):"")+
 latest+ad("content")+(T("show_faq")?`<section class="sec"><h2>Frequently Asked Questions</h2>${faq(D.faq)}</section>`:"");
 const aside=`<aside>${ad("sidebar")}<div class="box"><h2>Categories</h2><div class="cats">${cl.map(([c,k])=>`<a href="${cUrl(c)}">${esc(c)}<b>${k}</b></a>`).join("")||'<p class="muted">Coming soon.</p>'}</div></div>${T("show_popular")&&pop.length?`<div class="box"><h2>Popular Series</h2>${pop.map(s=>`<a class="pr" href="${sUrl(s)}">${pic(s.poster||s.banner,s.title)}<div><h3>${esc(s.title)}</h3><small>${eOf(s.id).length} episodes</small></div></a>`).join("")}</div>`:""}</aside>`;
 app.innerHTML=ad("header")+`<div class="${side?"two":""}"><div>${main}</div>${side?aside:""}</div>`;
