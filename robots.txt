@@ -2,5 +2,5 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 
-# Apna domain likhein (https:// ke saath):
+# Replace with your real domain (keep https://):
 Sitemap: https://YOUR-DOMAIN.com/sitemap.xml

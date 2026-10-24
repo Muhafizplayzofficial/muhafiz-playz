@@ -93,6 +93,12 @@ footer a:hover{color:var(--gold)}
 @media(min-width:1000px){.grid{grid-template-columns:repeat(6,1fr)}}
 @media(prefers-reduced-motion:reduce){.dr{transition:none}}
 
+.sl{display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font:700 .95rem Outfit}
+.sl:last-child{border:0}
+.sl:hover{color:var(--gold)}
+.sl .pic{width:56px;aspect-ratio:2/3;border-radius:6px;flex:none;font-size:.6rem;padding:4px}
+.sl small{display:block;font:400 .8rem "Nunito Sans";color:var(--mute)}
+
 /* admin */
 .adm{max-width:900px;margin:0 auto;padding:16px 14px 60px}
 .adm h1{font-size:1.6rem}
@@ -103,3 +109,53 @@ footer a:hover{color:var(--gold)}
 .li span{overflow:hidden;text-overflow:ellipsis}
 .sm{padding:6px 14px;font-size:.82rem;margin:0 0 0 4px}
 .msg{color:var(--gold);min-height:1.4em}
+
+.side .rows{grid-template-columns:1fr!important}.side .grid{grid-template-columns:repeat(2,1fr)!important}.side .box{margin-top:0}.side .box+.box{margin-top:20px}.side .rc .pic{width:84px}
+
+/* v2 */
+.inner{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:16px;margin:22px 0}
+.inner h2{margin-top:0}
+.pr{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.pr:last-child{border:0}
+.pr .pic{width:52px;aspect-ratio:2/3;border-radius:6px;flex:none;font-size:.6rem}
+.pr h3{font-size:.95rem;margin:0}
+.pr small{color:var(--mute)}
+.pr:hover h3{color:var(--gold)}
+.btn.wa{background:#25d366;color:#fff;display:block;text-align:center;margin:12px 0 0}
+.tabs.sc{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+.tab{white-space:nowrap}
+.tb{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.tb button{background:var(--card2);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:6px 10px;font:700 .8rem Outfit;cursor:pointer}
+.prev{border:1px dashed var(--org);border-radius:10px;padding:12px;margin-top:8px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.stat{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center}
+.stat b{display:block;font:800 1.8rem Outfit;color:var(--gold)}
+.ck{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)}
+.ok{color:#4ade80}.no{color:var(--mute)}
+.adm .tabs{flex-wrap:nowrap;overflow-x:auto}
+.hint{font-size:.8rem;color:var(--mute);margin:4px 0 0}
+.mm{text-align:center;padding:60px 14px}
+@media(min-width:700px){.stats{grid-template-columns:repeat(4,1fr)}}
+
+/* admin shell */
+.lg{max-width:400px;margin:8vh auto;padding:26px 20px;background:var(--card);border:1px solid var(--line);border-radius:16px;text-align:center}
+.lg .f{text-align:left}
+.shell{min-height:100vh}
+.side{position:fixed;top:0;left:0;bottom:0;width:260px;background:#0b090e;border-right:2px solid var(--org);z-index:40;display:flex;flex-direction:column;transform:translateX(-102%);transition:transform .2s}
+.side.on{transform:none}
+.sl{display:flex;gap:10px;align-items:center;padding:16px;border-bottom:1px solid var(--line)}
+.sl b{display:block;font:800 1rem Outfit;color:#fff;line-height:1.1}
+.sl i{font:600 .7rem Outfit;letter-spacing:.3em;color:var(--gold);font-style:normal}
+.side nav{flex:1;overflow:auto;padding:8px 10px}
+.side nav h4{margin:16px 12px 4px;font:700 .7rem Outfit;letter-spacing:.14em;color:var(--mute);text-transform:uppercase}
+.side nav a{display:block;padding:10px 12px;border-radius:8px;cursor:pointer;border-left:3px solid transparent;margin:2px 0}
+.side nav a:hover{background:var(--card2)}
+.side nav a.on{background:var(--card2);border-left-color:var(--gold);color:var(--gold);font-weight:700}
+.sf2{padding:12px;border-top:1px solid var(--line);display:grid;gap:8px}
+.sf2 .btn{margin:0;text-align:center}
+.mn{padding:12px 14px 80px;max-width:1000px}
+.top{display:flex;align-items:center;gap:8px}
+.top button{background:none;border:0;color:var(--txt);width:42px;height:42px;display:grid;place-items:center;cursor:pointer}
+.top h1{font-size:1.5rem;margin:0}
+.mk{background:var(--card2);border:1px dashed var(--gold);color:var(--gold);border-radius:8px;padding:8px;text-align:center}
+@media(min-width:900px){.side{transform:none}.mn{margin-left:260px;padding:20px 28px 80px}.top button{display:none}.dim{display:none!important}}

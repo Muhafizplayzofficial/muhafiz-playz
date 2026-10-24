@@ -1,2 +1,2 @@
-# AdSense approve hone ke baad yahan apni line likhein, jaise:
+# After AdSense approves your site, replace this file with your line, for example:
 # google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
