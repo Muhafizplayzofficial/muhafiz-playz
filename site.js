@@ -80,10 +80,10 @@ const share=()=>{if(!T("show_share"))return"";const u=encodeURIComponent(locatio
 function home(){
 const n=S.site_name,cl=catList(),pop=popular().slice(0,+S.popular_count||6),side=T("show_sidebar");
 seo(`${n} Official | ${S.home_title}`,`Watch and download the latest dramas and series with Urdu subtitles on ${n} Official. Full episode lists, multiple servers and download links.`,null,{"@context":"https://schema.org","@type":"WebSite",name:n+" Official",url:location.origin+"/",potentialAction:{"@type":"SearchAction",target:location.origin+"/search.html?q={q}","query-input":"required name=q"}});
-const main=(EPS.length?`<section class="sec" style="margin-top:0"><h2>Latest Episodes</h2>${rows(EPS.slice(0,+S.latest_count||12))}</section>`:`<div class="box"><p>No dramas have been added yet.</p></div>`)+ad("content")+
-`<section class="box prose"><h1>${esc(S.home_title)}</h1>${md(S.home_content)}</section>`+
+const latest=EPS.length?`<section class="sec"><h2>Latest Episodes</h2>${rows(EPS.slice(0,+S.latest_count||12))}</section>`:`<div class="box"><p>No dramas have been added yet.</p></div>`;
+const main=`<section class="box prose" style="margin-top:0"><h1>${esc(S.home_title)}</h1>${md(S.home_content)}</section>`+ad("content")+
 (T("show_articles")?SER.slice(0,+S.articles_count||6).map(s=>`<article class="art"><h2>${esc(s.title)} with Urdu Subtitles</h2>${pic(s.banner||s.poster,s.title)}<div class="prose">${md(intro(s))}</div><a class="btn" href="${sUrl(s)}">All ${esc(s.title)} Episodes</a></article>`).join(""):"")+
-(T("show_faq")?`<section class="sec"><h2>Frequently Asked Questions</h2>${faq(D.faq)}</section>`:"");
+latest+ad("content")+(T("show_faq")?`<section class="sec"><h2>Frequently Asked Questions</h2>${faq(D.faq)}</section>`:"");
 const aside=`<aside>${ad("sidebar")}<div class="box"><h2>Categories</h2><div class="cats">${cl.map(([c,k])=>`<a href="${cUrl(c)}">${esc(c)}<b>${k}</b></a>`).join("")||'<p class="muted">Coming soon.</p>'}</div></div>${T("show_popular")&&pop.length?`<div class="box"><h2>Popular Series</h2>${pop.map(s=>`<a class="pr" href="${sUrl(s)}">${pic(s.poster||s.banner,s.title)}<div><h3>${esc(s.title)}</h3><small>${eOf(s.id).length} episodes</small></div></a>`).join("")}</div>`:""}</aside>`;
 app.innerHTML=ad("header")+`<div class="${side?"two":""}"><div>${main}</div>${side?aside:""}</div>`;
 ld(faqLd(D.faq));
