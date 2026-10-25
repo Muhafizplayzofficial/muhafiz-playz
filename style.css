@@ -177,3 +177,9 @@ footer a:hover{color:var(--gold)}
 
 .sh{font-size:1.7rem;margin:24px 0 10px}
 .inner>.sh:first-of-type{margin-top:8px}
+
+.flat{margin:26px 0}
+.flat>h2:first-child{margin-top:0}
+.pbody .player{width:calc(100% + 24px);margin-left:-12px;border-radius:8px}
+.flat .sh{margin:26px 0 12px}
+.flat .sh:first-child{margin-top:0}
