@@ -166,3 +166,11 @@ footer a:hover{color:var(--gold)}
 .dc span{display:block;margin:10px 0 2px;color:var(--mute);font-size:1.02rem}
 .dc:hover span{color:var(--gold)}
 .dsep{width:200px;max-width:60%;height:3px;border:0;background:var(--line);margin:22px auto}
+
+.inner .tabs .tab{flex:1;padding:14px 10px;font-size:1.05rem;text-align:center}
+
+.srv{gap:10px}
+.srv .tab{flex:1 1 140px;padding:16px 18px;font-size:1.15rem;border-radius:12px;text-align:center}
+.cd{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.cd div{background:var(--card);border:2px solid var(--org);border-radius:12px;padding:12px 4px;text-align:center;color:var(--mute);font-size:.8rem}
+.cd b{display:block;font:800 1.9rem Outfit;color:var(--gold)}

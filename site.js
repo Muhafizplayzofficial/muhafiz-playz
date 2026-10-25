@@ -3,6 +3,7 @@ const C=window.MP||{};
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const slug=s=>String(s||"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const BASE=location.origin+location.pathname.replace(/\/[^/]*$/,"")+"/";
 const app=$("#app"),qs=new URLSearchParams(location.search),P=document.body.dataset.page;
 if(!C.SUPABASE_URL||C.SUPABASE_URL.includes("PASTE")){app.innerHTML='<div class="box"><h2>Setup incomplete</h2><p>Paste your Supabase URL and key into config.js.</p></div>';return}
 const sb=supabase.createClient(C.SUPABASE_URL,C.SUPABASE_KEY);
@@ -29,18 +30,21 @@ const sfx=()=>S.title_suffix||" | "+S.site_name+" Official";
 const md=t=>{let o="",p=[],l=[];const f=()=>{if(p.length)o+=`<p>${p.join(" ")}</p>`;if(l.length)o+=`<ul>${l.join("")}</ul>`;p=[];l=[]};
 const inl=x=>x.replace(/!\[([^\]]*)\]\((https?:[^)\s]+)\)/g,'<img src="$2" alt="$1" loading="lazy">').replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener nofollow">$1</a>').replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
 for(const r of esc(t||"").split("\n")){const s=r.trim();
-if(!s)f();else if(/^\[(episodes|player|download|dramas|season\s*\d+)\]$/i.test(s))f();else if(s.startsWith("### ")){f();o+=`<h3>${inl(s.slice(4))}</h3>`}else if(s.startsWith("## ")){f();o+=`<h2>${inl(s.slice(3))}</h2>`}else if(s.startsWith("- ")){if(p.length){o+=`<p>${p.join(" ")}</p>`;p=[]}l.push(`<li>${inl(s.slice(2))}</li>`)}else if(/^!\[[^\]]*\]\(https?:[^)\s]+\)$/.test(s)){f();o+=`<p>${inl(s)}</p>`}else{if(l.length){o+=`<ul>${l.join("")}</ul>`;l=[]}p.push(inl(s))}}
+if(!s)f();else if(/^\[(episodes|player|download|dramas|trailer|season\s*\d+)\]$/i.test(s))f();else if(s.startsWith("### ")){f();o+=`<h3>${inl(s.slice(4))}</h3>`}else if(s.startsWith("## ")){f();o+=`<h2>${inl(s.slice(3))}</h2>`}else if(s.startsWith("- ")){if(p.length){o+=`<p>${p.join(" ")}</p>`;p=[]}l.push(`<li>${inl(s.slice(2))}</li>`)}else if(/^!\[[^\]]*\]\(https?:[^)\s]+\)$/.test(s)){f();o+=`<p>${inl(s)}</p>`}else{if(l.length){o+=`<ul>${l.join("")}</ul>`;l=[]}p.push(inl(s))}}
 f();return o};
-const plain=(t,n=170)=>{const s=String(t||"").replace(/!?\[[^\]]*\]\([^)]*\)/g,"").replace(/\[(episodes|player|download|dramas|season\s*\d+)\]/gi,"").replace(/^#+ .*$/gm,"").replace(/[*\-]/g," ").replace(/\s+/g," ").trim();return s.length>n?s.slice(0,n-1)+"…":s};
+const plain=(t,n=170)=>{const s=String(t||"").replace(/!?\[[^\]]*\]\([^)]*\)/g,"").replace(/\[(episodes|player|download|dramas|trailer|season\s*\d+)\]/gi,"").replace(/^#+ .*$/gm,"").replace(/[*\-]/g," ").replace(/\s+/g," ").trim();return s.length>n?s.slice(0,n-1)+"…":s};
 const withMarker=(t,mk)=>{const h=t.search(/^##\s/m);if(h>0)return t.slice(0,h)+`\n[${mk}]\n\n`+t.slice(h);const p=t.search(/\n\s*\n/);return p>0?t.slice(0,p)+`\n\n[${mk}]\n`+t.slice(p):t+`\n\n[${mk}]\n`};
 const compose=(t,fn)=>{t=t||"";const re=/^[ \t]*\[([a-z]+(?:\s*\d+)?)\][ \t]*$/gim;let out="",last=0,m;while((m=re.exec(t))){const b=fn(m[1].toLowerCase().replace(/\s+/g,""));if(b==null)continue;out+=md(t.slice(last,m.index))+b;last=m.index+m[0].length}return out+md(t.slice(last))};
 const intro=s=>String(s.description||"").split(/\n\s*##/)[0];
-const abs=u=>!u?location.origin+"/og-default.jpg":/^https?:/.test(u)?u:new URL(u,location.href).href;
+const abs=u=>!u?BASE+"og-default.jpg":/^https?:/.test(u)?u:new URL(u,location.href).href;
 const ago=d=>{const m=(Date.now()-new Date(d))/6e4;if(m<60)return Math.max(1,Math.floor(m))+" min ago";if(m<1440)return Math.floor(m/60)+" hours ago";if(m<43200)return Math.floor(m/1440)+" days ago";return new Date(d).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})};
 const pic=(u,alt,cls="")=>u?`<img class="pic ${cls}" src="${esc(u)}" alt="${esc(alt)}" loading="lazy" onerror="this.style.opacity=0">`:`<div class="pic ph ${cls}">${esc(alt)}</div>`;
 const sOf=id=>SER.find(s=>s.id===id),eOf=sid=>EPS.filter(e=>e.series_id===sid).sort((a,b)=>(a.season-b.season)||(a.number-b.number));
 const sUrl=s=>`series.html?s=${encodeURIComponent(s.slug)}`,eUrl=e=>`watch.html?id=${e.id}`,cUrl=n=>`category.html?c=${slug(n)}`;
 const eTitle=(e,s)=>e.title||`${s.title} Episode ${e.number}`;
+const soon=e=>e&&e.release_at&&new Date(e.release_at)>new Date();
+const yt=u=>{const m=String(u||"").match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);return m?`https://www.youtube.com/embed/${m[1]}`:u};
+const trailerBox=u=>u?`<div class="inner"><h2>Watch Trailer</h2><iframe class="player" src="${esc(yt(u))}" allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`:"";
 const pad=n=>String(n).padStart(2,"0");
 const frag=h=>document.createRange().createContextualFragment(h);
 const meta=(k,v,p)=>{let e=$(`meta[${p?"property":"name"}="${k}"]`);if(!e){e=document.createElement("meta");e.setAttribute(p?"property":"name",k);document.head.appendChild(e)}e.content=v};
@@ -53,7 +57,7 @@ const views=sid=>eOf(sid).reduce((n,e)=>n+(e.views||0),0);
 const popular=()=>[...SER].sort((a,b)=>(b.popular-a.popular)||(views(b.id)-views(a.id)));
 const catList=()=>{const n={};SER.forEach(s=>{if(s.category)n[s.category]=(n[s.category]||0)+1});const o=CATS.map(c=>c.name);Object.keys(n).forEach(k=>{if(!o.includes(k))o.push(k)});return o.filter(k=>n[k]).map(k=>[k,n[k]])};
 const grid=l=>`<div class="grid">${l.map(s=>`<a class="pc" href="${sUrl(s)}">${pic(s.poster||s.banner,s.title)}<h3>${esc(s.title)}</h3><p>${esc(s.category||"")}${s.year?", "+esc(s.year):""}</p></a>`).join("")}</div>`;
-const rows=l=>`<div class="rows">${l.map(e=>{const s=sOf(e.series_id);return s?`<a class="rc" href="${eUrl(e)}">${pic(e.thumb||s.banner||s.poster,s.title)}<div><h3>${esc(eTitle(e,s))} with Urdu Subtitles</h3><small>${ago(e.created_at)}</small></div></a>`:""}).join("")}</div>`;
+const rows=l=>`<div class="rows">${l.map(e=>{const s=sOf(e.series_id);return s?`<a class="rc" href="${eUrl(e)}">${pic(e.thumb||s.banner||s.poster,s.title)}<div><h3>${esc(eTitle(e,s))} with Urdu Subtitles</h3><small>${soon(e)?"Coming soon":ago(e.created_at)}</small></div></a>`:""}).join("")}</div>`;
 const faq=l=>l.map(([q,a])=>`<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("");
 const faqLd=l=>({"@context":"https://schema.org","@type":"FAQPage",mainEntity:l.map(([q,a])=>({"@type":"Question",name:q,acceptedAnswer:{"@type":"Answer",text:a}}))});
 const ld=o=>{const l=document.createElement("script");l.type="application/ld+json";l.textContent=JSON.stringify(o);document.head.appendChild(l)};
@@ -73,13 +77,13 @@ $("#mb").onclick=()=>tg(true);dim.onclick=()=>tg(false);
 $("#sb").onclick=()=>{$("#sf").classList.toggle("on");$("#sf input").focus()};
 if(qs.get("q"))$("#sf").classList.add("on");
 const soc=[["facebook","Facebook"],["telegram","Telegram"],["youtube","YouTube"],["instagram","Instagram"],["twitter","X"],["tiktok","TikTok"]].filter(([k])=>S[k]).map(([k,v])=>`<a href="${esc(S[k])}" target="_blank" rel="noopener">${v}</a>`).join("");
-$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 4</p></footer>`;
+$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 6</p></footer>`;
 }
 const share=()=>{if(!T("show_share"))return"";const u=encodeURIComponent(location.href),t=encodeURIComponent(document.title);return`<div class="share"><a href="https://www.facebook.com/sharer/sharer.php?u=${u}" target="_blank" rel="noopener">Facebook</a><a href="https://twitter.com/intent/tweet?url=${u}&text=${t}" target="_blank" rel="noopener">X</a><a href="https://wa.me/?text=${t}%20${u}" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/share/url?url=${u}&text=${t}" target="_blank" rel="noopener">Telegram</a></div>`};
 
 function home(){
 const n=S.site_name,cl=catList(),pop=popular().slice(0,+S.popular_count||6),side=T("show_sidebar");
-seo(`${n} Official | ${S.home_title}`,`Watch and download the latest dramas and series with Urdu subtitles on ${n} Official. Full episode lists, multiple servers and download links.`,null,{"@context":"https://schema.org","@type":"WebSite",name:n+" Official",url:location.origin+"/",potentialAction:{"@type":"SearchAction",target:location.origin+"/search.html?q={q}","query-input":"required name=q"}});
+seo(`${n} Official | ${S.home_title}`,`Watch and download the latest dramas and series with Urdu subtitles on ${n} Official. Full episode lists, multiple servers and download links.`,null,{"@context":"https://schema.org","@type":"WebSite",name:n+" Official",url:BASE,potentialAction:{"@type":"SearchAction",target:BASE+"search.html?q={q}","query-input":"required name=q"}});
 const latest=EPS.length?`<section class="sec"><h2>Latest Episodes</h2>${rows(EPS.slice(0,+S.latest_count||12))}</section>`:`<div class="box"><p>No dramas have been added yet.</p></div>`;
 const dr=SER.slice(0,+S.dramas_count||20).map(s=>`<a class="dc" href="${sUrl(s)}">${pic(s.banner||s.poster,s.title)}<span>${esc(s.title)}</span></a><hr class="dsep">`).join("");
 let hc=S.home_content;if(!/^[ \t]*\[dramas\][ \t]*$/mi.test(hc))hc=withMarker(hc,"dramas");
@@ -98,8 +102,9 @@ if(!/^[ \t]*\[(episodes|season\s*\d+)\][ \t]*$/mi.test(txt))txt=withMarker(txt,"
 seo(s.meta_title||`${s.title} Urdu Subtitles All Episodes${sfx()}`,s.meta_desc||plain(intro(s),155)||`Watch all episodes of ${s.title} with Urdu subtitles.`,s.banner||s.poster,{"@context":"https://schema.org","@type":"TVSeries",name:s.title,description:plain(intro(s),300),image:abs(s.poster||s.banner),numberOfEpisodes:eps.length,inLanguage:"ur"});
 const rel=SER.filter(x=>x.id!==s.id&&x.category===s.category).slice(0,6),done=new Set();
 const qa=[[`Where can I watch ${s.title} with Urdu subtitles?`,`All available episodes of ${s.title} are listed on this page. Scroll to your season and tap an episode to watch or download it.`],[`How many episodes of ${s.title} are available?`,`${eps.length} episode${eps.length==1?" is":"s are"} available right now. New episodes are added as soon as they are ready.`]];
-const block=n=>{done.add(n);const l=eps.filter(e=>e.season===n);return`<div class="inner"><h2>${esc(s.title)} Season ${n} Episodes</h2><div class="eps">${l.map((e,j)=>`<a href="${eUrl(e)}">Episode ${pad(e.number)}${n===seas[seas.length-1]&&j===l.length-1?"<small>Latest</small>":""}</a>`).join("")}</div></div>`};
-const body=compose(txt,m=>{if(m==="episodes")return seas.filter(n=>!done.has(n)).map(block).join("")||'<div class="inner"><p class="muted">Episodes are coming soon.</p></div>';const x=/^season(\d+)$/.exec(m);return x?(seas.includes(+x[1])?block(+x[1]):""):null});
+const block=n=>{done.add(n);const l=eps.filter(e=>e.season===n);return`<div class="inner"><h2>${esc(s.title)} Season ${n} Episodes</h2><div class="eps">${l.map((e,j)=>`<a href="${eUrl(e)}">Episode ${pad(e.number)}${soon(e)?"<small>Coming soon</small>":n===seas[seas.length-1]&&j===l.length-1?"<small>Latest</small>":""}</a>`).join("")}</div></div>`};
+let tu=0;const body0=compose(txt,m=>{if(m==="trailer"){tu=1;return trailerBox(s.trailer)}if(m==="episodes")return seas.filter(n=>!done.has(n)).map(block).join("")||'<div class="inner"><p class="muted">Episodes are coming soon.</p></div>';const x=/^season(\d+)$/.exec(m);return x?(seas.includes(+x[1])?block(+x[1]):""):null});
+const body=body0+(tu?"":trailerBox(s.trailer));
 app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / ${s.category?`<a href="${cUrl(s.category)}">${esc(s.category)}</a> / `:""}${esc(s.title)}</div>
 <h1>${esc(s.title)} with Urdu Subtitles</h1><p class="meta">${s.category?`<span class="chip">${esc(s.category)}</span>`:""}${s.year?esc(s.year)+" · ":""}${esc(s.status||"")}${s.status?" · ":""}${eps.length} episodes</p>
 ${pic(s.banner||s.poster,s.title,"hb")}${ad("header")}
@@ -117,9 +122,12 @@ const auto=`Watch ${t} online with Urdu subtitles on ${S.site_name} Official. Ch
 let txt=e.details||auto;if(!/^[ \t]*\[player\][ \t]*$/mi.test(txt))txt=withMarker(txt,"player");
 const hasD=/^[ \t]*\[download\][ \t]*$/mi.test(txt);
 const dls=[["dl480","(480)"],["dl720","(720)"],["dl1080","(1080)"],["dlbluray","Bluray"]].filter(([k])=>e[k]);
-const player=`<div class="inner"><h2>Watch ${esc(t)}</h2>${srv.length>1?`<div class="tabs">${srv.map((x,j)=>`<button class="tab${j?"":" on"}" data-i="${j}">${esc(x.l)}</button>`).join("")}</div>`:""}${srv.length?`<iframe id="pl" class="player" src="${esc(srv[0].u)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`:'<div class="nop">The player for this episode has not been added yet.</div>'}<p class="muted">${esc(S.player_note||"If the video does not play, try another server.")}${srv.length&&T("show_newtab")?` <a id="nt" href="${esc(srv[0].u)}" target="_blank" rel="noopener" style="color:var(--gold)">Open in new tab</a>`:""}</p></div>`;
+const player=`<div class="inner"><h2>Watch ${esc(t)}</h2>${srv.length>=1?`<div class="tabs srv">${srv.map((x,j)=>`<button class="tab${j?"":" on"}" data-i="${j}">${esc(x.l)}</button>`).join("")}</div>`:""}${srv.length?`<iframe id="pl" class="player" src="${esc(srv[0].u)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`:'<div class="nop">The player for this episode has not been added yet.</div>'}<p class="muted">${esc(S.player_note||"If the video does not play, try another server.")}${srv.length&&T("show_newtab")?` <a id="nt" href="${esc(srv[0].u)}" target="_blank" rel="noopener" style="color:var(--gold)">Open in new tab</a>`:""}</p></div>`;
 const dl=`<div class="inner"><h2>${esc(S.dl_title||"Download")} ${esc(t)}</h2><div class="dl">${dls.map(([k,l])=>`<a class="${k==="dlbluray"?"b":""}" href="${esc(e[k])}" target="_blank" rel="noopener nofollow">Download ${l}</a>`).join("")||'<p class="muted">Download links will be added soon.</p>'}</div>${S.whatsapp_group?`<a class="btn wa" href="${esc(S.whatsapp_group)}" target="_blank" rel="noopener">Join our WhatsApp Channel</a>`:""}</div>`;
-const body=compose(txt,m=>m==="player"?player+(hasD?"":dl+ad("content")):m==="download"?dl+ad("content"):null);
+const rl=soon(e),tr=e.trailer||s.trailer;let tu=0;
+const cs=`<div class="inner soon"><h2>Coming Soon</h2><p class="muted">${esc(t)} will be released on <b>${new Date(e.release_at).toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"})}</b></p><div class="cd"><div><b id="cd-d">0</b>Days</div><div><b id="cd-h">0</b>Hours</div><div><b id="cd-m">0</b>Minutes</div><div><b id="cd-s">0</b>Seconds</div></div></div>`;
+const body0=compose(txt,m=>m==="trailer"?(tu=1,trailerBox(tr)):m==="player"?(rl?cs:player)+(hasD||rl?"":dl+ad("content")):m==="download"?(rl?"":dl+ad("content")):null);
+const body=body0+(tu?"":trailerBox(tr));
 const words=txt.split(/\s+/).length;
 seo(`${t} with Urdu Subtitles${sfx()}`,e.meta_desc||plain(txt,155),e.thumb||s.banner||s.poster,{"@context":"https://schema.org","@type":"TVEpisode",name:t,episodeNumber:e.number,seasonNumber:e.season,image:abs(e.thumb||s.banner||s.poster),datePublished:e.created_at,description:plain(txt,300),inLanguage:"ur",partOfSeries:{"@type":"TVSeries",name:s.title}});
 app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / ${s.category?`<a href="${cUrl(s.category)}">${esc(s.category)}</a> / `:""}<a href="${sUrl(s)}">${esc(s.title)}</a> / Episode ${e.number}</div>
@@ -130,7 +138,8 @@ ${pic(e.thumb||s.banner||s.poster,t,"hb")}${ad("header")}
 <section class="box"><h2>All Episodes of ${esc(s.title)}</h2><div class="eps">${sib.map(x=>`<a href="${eUrl(x)}" class="${x.id===e.id?"cur":""}">${sib.some(y=>y.season!==x.season)?`S${x.season} `:""}Episode ${pad(x.number)}</a>`).join("")}</div></section>
 <section class="sec"><h2>You May Also Like</h2>${grid(SER.filter(x=>x.id!==s.id).slice(0,6))}</section>${share()}`;
 $$("#app .tab").forEach(bt=>bt.onclick=()=>{$$("#app .tab").forEach(x=>x.classList.toggle("on",x===bt));$("#pl").src=srv[bt.dataset.i].u;const nt=$("#nt");if(nt)nt.href=srv[bt.dataset.i].u});
-try{if(!sessionStorage["h"+e.id]){sessionStorage["h"+e.id]=1;sb.rpc("mp_hit_episode",{p:e.id})}}catch(x){}
+if(rl){const T0=new Date(e.release_at).getTime(),u=()=>{const d=Math.max(0,Math.floor((T0-Date.now())/1e3));if(!d)return location.reload();const f=(i,v)=>{const x=$(i);if(x)x.textContent=v};f('#cd-d',Math.floor(d/86400));f('#cd-h',Math.floor(d%86400/3600));f('#cd-m',Math.floor(d%3600/60));f('#cd-s',d%60)};u();setInterval(u,1000)}
+try{if(!rl&&!sessionStorage["h"+e.id]){sessionStorage["h"+e.id]=1;sb.rpc("mp_hit_episode",{p:e.id})}}catch(x){}
 }
 
 function category(){

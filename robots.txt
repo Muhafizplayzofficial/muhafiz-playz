@@ -1,6 +1,3 @@
 User-agent: *
 Allow: /
 Disallow: /admin.html
-
-# Replace with your real domain (keep https://):
-Sitemap: https://YOUR-DOMAIN.com/sitemap.xml
