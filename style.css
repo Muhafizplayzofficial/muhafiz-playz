@@ -174,3 +174,6 @@ footer a:hover{color:var(--gold)}
 .cd{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
 .cd div{background:var(--card);border:2px solid var(--org);border-radius:12px;padding:12px 4px;text-align:center;color:var(--mute);font-size:.8rem}
 .cd b{display:block;font:800 1.9rem Outfit;color:var(--gold)}
+
+.sh{font-size:1.7rem;margin:24px 0 10px}
+.inner>.sh:first-of-type{margin-top:8px}

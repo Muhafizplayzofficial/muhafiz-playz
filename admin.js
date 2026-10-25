@@ -95,7 +95,7 @@ if(tab==="series"){if(!o.title)return alert("Please enter the drama name.");o.sl
 if(tab==="episodes"&&(!o.series_id||o.number==null))return alert("Drama and episode number are required.");
 if(tab==="categories"&&!o.name)return alert("Please enter the category name.");
 const{error}=row?await sb.from(sp.t).update(o).eq("id",row.id):await sb.from(sp.t).insert(o);
-if(error)return alert(error.message);await refs();
+if(error)return alert(error.message+(/column|schema cache/i.test(error.message)?"\n\nPlease run supabase-update2.sql in Supabase (SQL Editor), then try again.":""));await refs();
 if(tab==="episodes"&&!row){keep={series_id:o.series_id,season:o.season,number:o.number+1,published:true};sel=null;return draw("Episode saved. The next episode number is ready.")}
 sel=null;draw("Saved.")};
 if(row)$("#nw").onclick=()=>go(tab);}
