@@ -38,7 +38,7 @@ const compose=(t,fn)=>{t=t||"";const re=/^[ \t]*\[([a-z]+(?:\s*\d+)?)\][ \t]*$/g
 const intro=s=>String(s.description||"").split(/\n\s*##/)[0];
 const abs=u=>!u?BASE+"og-default.jpg":/^https?:/.test(u)?u:new URL(u,location.href).href;
 const ago=d=>{const m=(Date.now()-new Date(d))/6e4;if(m<60)return Math.max(1,Math.floor(m))+" min ago";if(m<1440)return Math.floor(m/60)+" hours ago";if(m<43200)return Math.floor(m/1440)+" days ago";return new Date(d).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})};
-const px=(u,w)=>/\/storage\/v1\/object\/public\//.test(u||"")?`https://wsrv.nl/?url=${encodeURIComponent(u.replace(/^https?:\/\//,""))}&w=${w}&output=webp&q=75`:u;
+const px=(u,w)=>/^https?:/.test(u||"")&&!/wsrv\.nl/.test(u)?`https://wsrv.nl/?url=${encodeURIComponent(u.replace(/^https?:\/\//,""))}&w=${w}&output=webp&q=75`:u;
 const pic=(u,alt,cls="",w=800)=>u?`<img class="pic ${cls}" src="${esc(px(u,w))}" alt="${esc(alt)}" loading="lazy" onerror="if(!this.dataset.f){this.dataset.f=1;this.src='${esc(u)}'}else this.style.opacity=0">`:`<div class="pic ph ${cls}">${esc(alt)}</div>`;
 const sOf=id=>SER.find(s=>s.id===id),eOf=sid=>EPS.filter(e=>e.series_id===sid).sort((a,b)=>(a.season-b.season)||(a.number-b.number));
 const sUrl=s=>`series.html?s=${encodeURIComponent(s.slug)}`,eUrl=e=>`watch.html?id=${e.id}`,cUrl=n=>`category.html?c=${slug(n)}`;
@@ -78,7 +78,7 @@ $("#mb").onclick=()=>tg(true);dim.onclick=()=>tg(false);
 $("#sb").onclick=()=>{$("#sf").classList.toggle("on");$("#sf input").focus()};
 if(qs.get("q"))$("#sf").classList.add("on");
 const soc=[["facebook","Facebook"],["telegram","Telegram"],["youtube","YouTube"],["instagram","Instagram"],["twitter","X"],["tiktok","TikTok"]].filter(([k])=>S[k]).map(([k,v])=>`<a href="${esc(S[k])}" target="_blank" rel="noopener">${v}</a>`).join("");
-$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 11</p></footer>`;
+$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 12</p></footer>`;
 }
 const share=()=>{if(!T("show_share"))return"";const u=encodeURIComponent(location.href),t=encodeURIComponent(document.title);return`<div class="share"><a href="https://www.facebook.com/sharer/sharer.php?u=${u}" target="_blank" rel="noopener">Facebook</a><a href="https://twitter.com/intent/tweet?url=${u}&text=${t}" target="_blank" rel="noopener">X</a><a href="https://wa.me/?text=${t}%20${u}" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/share/url?url=${u}&text=${t}" target="_blank" rel="noopener">Telegram</a></div>`};
 
