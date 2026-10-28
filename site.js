@@ -38,7 +38,8 @@ const compose=(t,fn)=>{t=t||"";const re=/^[ \t]*\[([a-z]+(?:\s*\d+)?)\][ \t]*$/g
 const intro=s=>String(s.description||"").split(/\n\s*##/)[0];
 const abs=u=>!u?BASE+"og-default.jpg":/^https?:/.test(u)?u:new URL(u,location.href).href;
 const ago=d=>{const m=(Date.now()-new Date(d))/6e4;if(m<60)return Math.max(1,Math.floor(m))+" min ago";if(m<1440)return Math.floor(m/60)+" hours ago";if(m<43200)return Math.floor(m/1440)+" days ago";return new Date(d).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})};
-const pic=(u,alt,cls="")=>u?`<img class="pic ${cls}" src="${esc(u)}" alt="${esc(alt)}" loading="lazy" onerror="this.style.opacity=0">`:`<div class="pic ph ${cls}">${esc(alt)}</div>`;
+const px=(u,w)=>/\/storage\/v1\/object\/public\//.test(u||"")?`https://wsrv.nl/?url=${encodeURIComponent(u.replace(/^https?:\/\//,""))}&w=${w}&output=webp&q=75`:u;
+const pic=(u,alt,cls="",w=800)=>u?`<img class="pic ${cls}" src="${esc(px(u,w))}" alt="${esc(alt)}" loading="lazy" onerror="if(!this.dataset.f){this.dataset.f=1;this.src='${esc(u)}'}else this.style.opacity=0">`:`<div class="pic ph ${cls}">${esc(alt)}</div>`;
 const sOf=id=>SER.find(s=>s.id===id),eOf=sid=>EPS.filter(e=>e.series_id===sid).sort((a,b)=>(a.season-b.season)||(a.number-b.number));
 const sUrl=s=>`series.html?s=${encodeURIComponent(s.slug)}`,eUrl=e=>`watch.html?id=${e.id}`,cUrl=n=>`category.html?c=${slug(n)}`;
 const eTitle=(e,s)=>e.title||`${s.title} Episode ${e.number}`;
@@ -56,8 +57,8 @@ const addScript=(src,a={})=>{const s=document.createElement("script");s.src=src;
 const views=sid=>eOf(sid).reduce((n,e)=>n+(e.views||0),0);
 const popular=()=>[...SER].sort((a,b)=>(b.popular-a.popular)||(views(b.id)-views(a.id)));
 const catList=()=>{const n={};SER.forEach(s=>{if(s.category)n[s.category]=(n[s.category]||0)+1});const o=CATS.map(c=>c.name);Object.keys(n).forEach(k=>{if(!o.includes(k))o.push(k)});return o.filter(k=>n[k]).map(k=>[k,n[k]])};
-const grid=l=>`<div class="grid">${l.map(s=>`<a class="pc" href="${sUrl(s)}">${pic(s.poster||s.banner,s.title)}<h3>${esc(s.title)}</h3><p>${esc(s.category||"")}${s.year?", "+esc(s.year):""}</p></a>`).join("")}</div>`;
-const rows=l=>`<div class="rows">${l.map(e=>{const s=sOf(e.series_id);return s?`<a class="rc" href="${eUrl(e)}">${pic(e.thumb||s.banner||s.poster,s.title)}<div><h3>${esc(eTitle(e,s))} with Urdu Subtitles</h3><small>${soon(e)?"Coming soon":ago(e.created_at)}</small></div></a>`:""}).join("")}</div>`;
+const grid=l=>`<div class="grid">${l.map(s=>`<a class="pc" href="${sUrl(s)}">${pic(s.poster||s.banner,s.title,"",400)}<h3>${esc(s.title)}</h3><p>${esc(s.category||"")}${s.year?", "+esc(s.year):""}</p></a>`).join("")}</div>`;
+const rows=l=>`<div class="rows">${l.map(e=>{const s=sOf(e.series_id);return s?`<a class="rc" href="${eUrl(e)}">${pic(e.thumb||s.banner||s.poster,s.title,"",320)}<div><h3>${esc(eTitle(e,s))} with Urdu Subtitles</h3><small>${soon(e)?"Coming soon":ago(e.created_at)}</small></div></a>`:""}).join("")}</div>`;
 const faq=l=>l.map(([q,a])=>`<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("");
 const faqLd=l=>({"@context":"https://schema.org","@type":"FAQPage",mainEntity:l.map(([q,a])=>({"@type":"Question",name:q,acceptedAnswer:{"@type":"Answer",text:a}}))});
 const ld=o=>{const l=document.createElement("script");l.type="application/ld+json";l.textContent=JSON.stringify(o);document.head.appendChild(l)};
@@ -77,7 +78,7 @@ $("#mb").onclick=()=>tg(true);dim.onclick=()=>tg(false);
 $("#sb").onclick=()=>{$("#sf").classList.toggle("on");$("#sf input").focus()};
 if(qs.get("q"))$("#sf").classList.add("on");
 const soc=[["facebook","Facebook"],["telegram","Telegram"],["youtube","YouTube"],["instagram","Instagram"],["twitter","X"],["tiktok","TikTok"]].filter(([k])=>S[k]).map(([k,v])=>`<a href="${esc(S[k])}" target="_blank" rel="noopener">${v}</a>`).join("");
-$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 10</p></footer>`;
+$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 11</p></footer>`;
 }
 const share=()=>{if(!T("show_share"))return"";const u=encodeURIComponent(location.href),t=encodeURIComponent(document.title);return`<div class="share"><a href="https://www.facebook.com/sharer/sharer.php?u=${u}" target="_blank" rel="noopener">Facebook</a><a href="https://twitter.com/intent/tweet?url=${u}&text=${t}" target="_blank" rel="noopener">X</a><a href="https://wa.me/?text=${t}%20${u}" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/share/url?url=${u}&text=${t}" target="_blank" rel="noopener">Telegram</a></div>`};
 
@@ -89,7 +90,7 @@ const dr=SER.slice(0,+S.dramas_count||20).map(s=>`<a class="dc" href="${sUrl(s)}
 let hc=S.home_content;if(!/^[ \t]*\[dramas\][ \t]*$/mi.test(hc))hc=withMarker(hc,"dramas");
 const main=`<section class="box prose" style="margin-top:0"><h1>${esc(S.home_title)}</h1>${compose(hc,m=>m==="dramas"?`<hr class="dsep">${dr}`:null)}</section>`+ad("content")+
 latest+ad("content")+(T("show_faq")?`<section class="sec"><h2>Frequently Asked Questions</h2>${faq(D.faq)}</section>`:"");
-const aside=`<aside>${ad("sidebar")}<div class="box"><h2>Categories</h2><div class="cats">${cl.map(([c,k])=>`<a href="${cUrl(c)}">${esc(c)}<b>${k}</b></a>`).join("")||'<p class="muted">Coming soon.</p>'}</div></div>${T("show_popular")&&pop.length?`<div class="box"><h2>Popular Series</h2>${pop.map(s=>`<a class="pr" href="${sUrl(s)}">${pic(s.poster||s.banner,s.title)}<div><h3>${esc(s.title)}</h3><small>${eOf(s.id).length} episodes</small></div></a>`).join("")}</div>`:""}</aside>`;
+const aside=`<aside>${ad("sidebar")}<div class="box"><h2>Categories</h2><div class="cats">${cl.map(([c,k])=>`<a href="${cUrl(c)}">${esc(c)}<b>${k}</b></a>`).join("")||'<p class="muted">Coming soon.</p>'}</div></div>${T("show_popular")&&pop.length?`<div class="box"><h2>Popular Series</h2>${pop.map(s=>`<a class="pr" href="${sUrl(s)}">${pic(s.poster||s.banner,s.title,"",120)}<div><h3>${esc(s.title)}</h3><small>${eOf(s.id).length} episodes</small></div></a>`).join("")}</div>`:""}</aside>`;
 app.innerHTML=ad("header")+`<div class="${side?"two":""}"><div>${main}</div>${side?aside:""}</div>`;
 ld(faqLd(D.faq));
 }
@@ -107,7 +108,7 @@ let tu=0;const body0=compose(txt,m=>{if(m==="trailer"){tu=1;return trailerBox(s.
 const body=body0+(tu?"":trailerBox(s.trailer));
 app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / ${s.category?`<a href="${cUrl(s.category)}">${esc(s.category)}</a> / `:""}${esc(s.title)}</div>
 <h1>${esc(s.title)} with Urdu Subtitles</h1><p class="meta">${s.category?`<span class="chip">${esc(s.category)}</span>`:""}${s.year?esc(s.year)+" · ":""}${esc(s.status||"")}${s.status?" · ":""}${eps.length} episodes</p>
-${pic(s.banner||s.poster,s.title,"hb")}${ad("header")}
+${pic(s.banner||s.poster,s.title,"hb",1000)}${ad("header")}
 <article class="box prose">${body}</article>${ad("content")}
 ${T("show_faq")?`<section class="sec"><h2>Frequently Asked Questions</h2>${faq(qa)}</section>`:""}
 ${rel.length?`<section class="sec"><h2>More ${esc(s.category)}</h2>${grid(rel)}</section>`:""}${share()}`;
@@ -132,7 +133,7 @@ const words=txt.split(/\s+/).length;
 seo(`${t} with Urdu Subtitles${sfx()}`,e.meta_desc||plain(txt,155),e.thumb||s.banner||s.poster,{"@context":"https://schema.org","@type":"TVEpisode",name:t,episodeNumber:e.number,seasonNumber:e.season,image:abs(e.thumb||s.banner||s.poster),datePublished:e.created_at,description:plain(txt,300),inLanguage:"ur",partOfSeries:{"@type":"TVSeries",name:s.title}});
 app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / ${s.category?`<a href="${cUrl(s.category)}">${esc(s.category)}</a> / `:""}<a href="${sUrl(s)}">${esc(s.title)}</a> / Episode ${e.number}</div>
 ${s.category?`<span class="chip">${esc(s.category)}</span>`:""}<h1>${esc(t)} with Urdu Subtitles</h1><p class="meta">${esc(S.site_name)} Official · ${ago(e.created_at)} · ${Math.max(1,Math.round(words/180))} min read</p>
-${pic(e.thumb||s.banner||s.poster,t,"hb")}${ad("header")}
+${pic(e.thumb||s.banner||s.poster,t,"hb",1000)}${ad("header")}
 <article class="box prose pbody">${body}</article>
 <div class="nav">${pv?`<a class="btn o" href="${eUrl(pv)}">Previous Episode</a>`:"<span></span>"}${nx?`<a class="btn" href="${eUrl(nx)}">Next Episode</a>`:""}</div>
 <section class="box"><h2>All Episodes of ${esc(s.title)}</h2><div class="eps">${sib.map(x=>`<a href="${eUrl(x)}" class="${x.id===e.id?"cur":""}">${sib.some(y=>y.season!==x.season)?`S${x.season} `:""}Episode ${pad(x.number)}</a>`).join("")}</div></section>

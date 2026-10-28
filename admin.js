@@ -61,6 +61,7 @@ $("#body").innerHTML=`<div class="stats"><div class="stat"><b>${SER.length}</b>D
 <div class="box"><h2>Setup checklist</h2>${ck.map(([l,v])=>`<div class="ck"><span>${l}</span><span class="${v?"ok":"no"}">${v?"Done":"Pending"}</span></div>`).join("")}</div>`;
 $$("[data-g]").forEach(b=>b.onclick=()=>go(b.dataset.g));$$("[data-ed]").forEach(b=>b.onclick=()=>go("episodes",+b.dataset.ed))}
 
+const shrink=(f,max)=>new Promise(r=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/im.width),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);c.toBlob(b=>r(b||f),"image/webp",0.78)};im.onerror=()=>r(f);im.src=URL.createObjectURL(f)});
 function ins(ta,b,a,ph){const s=ta.selectionStart,e=ta.selectionEnd,t=ta.value.slice(s,e)||ph;ta.setRangeText(b+t+a,s,e,"end");ta.focus()}
 async function crud(){
 const tab=view,sp=SPEC[tab];
@@ -89,7 +90,7 @@ $$("[data-tb]").forEach(b=>b.onclick=()=>{const ta=$(`[data-k=${b.dataset.for}]`
 if(t[1]==="L"){const u=prompt("Link (https://...)");if(u)ins(ta,"[","]("+u+")","link text")}else if(t[1]==="I"){const u=prompt("Photo link (https://...)");if(u)ins(ta,"\n![","]("+u+")\n","photo")}else if(t[1]==="S"){const n=prompt("Season number");if(n)ins(ta,`\n[season ${parseInt(n)||1}]\n`,"","")}else ins(ta,t[1],t[2],t[3])});
 $$("[data-pv]").forEach(b=>b.onclick=()=>{const p=$("#pv-"+b.dataset.pv);p.hidden=!p.hidden;if(!p.hidden)p.innerHTML=md($(`[data-k=${b.dataset.pv}]`).value)});
 $$("[data-up]").forEach(i=>i.onchange=async()=>{const f=i.files[0];if(!f)return;const n=Date.now()+"-"+slug(f.name.replace(/\.[^.]+$/,""))+"."+(f.name.split(".").pop()||"jpg").toLowerCase();
-const{error}=await sb.storage.from("posters").upload(n,f);if(error)return alert(error.message);$(`[data-k=${i.dataset.up}]`).value=sb.storage.from("posters").getPublicUrl(n).data.publicUrl});
+const big=/thumb|banner/.test(i.dataset.up)?1280:600;const blob=await shrink(f,big);const n2=n.replace(/\.[^.]+$/,".webp");const{error}=await sb.storage.from("posters").upload(n2,blob,{contentType:"image/webp",cacheControl:"31536000"});if(error)return alert(error.message);$(`[data-k=${i.dataset.up}]`).value=sb.storage.from("posters").getPublicUrl(n2).data.publicUrl});
 $("#sv").onclick=async()=>{const o={};for(const el of $$("[data-k]")){const k=el.dataset.k,ty=sp.f.find(f=>f[0]===k)[2];o[k]=ty==="chk"?el.checked:ty==="dt"?(el.value?new Date(el.value).toISOString():null):ty==="num"||ty==="ser"?(el.value===""?null:Number(el.value)):(el.value.trim()||null)}
 if(tab==="series"){if(!o.title)return alert("Please enter the drama name.");o.slug=slug(o.slug||o.title);if(o.category&&!CATS.some(c=>c.name===o.category))await sb.from("mp_categories").insert({name:o.category,sort:CATS.length+1})}
 if(tab==="episodes"&&(!o.series_id||o.number==null))return alert("Drama and episode number are required.");
