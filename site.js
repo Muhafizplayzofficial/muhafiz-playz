@@ -4,7 +4,12 @@ const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelecto
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const slug=s=>String(s||"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 const BASE=location.origin+location.pathname.replace(/\/[^/]*$/,"")+"/";
+try{if(localStorage.getItem("mp_theme")==="light")document.documentElement.classList.add("lt")}catch(e){}
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();window.__ip=e});
+const norm=s=>String(s||"").toLowerCase().replace(/ı/g,"i").normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+const getFavs=()=>{try{return JSON.parse(localStorage.getItem("mp_fav")||"[]")}catch(e){return[]}},setFavs=f=>{try{localStorage.setItem("mp_fav",JSON.stringify(f))}catch(e){}};
 const app=$("#app"),qs=new URLSearchParams(location.search),P=document.body.dataset.page;
+if(document.body.dataset.s)qs.set("s",document.body.dataset.s);if(document.body.dataset.id)qs.set("id",document.body.dataset.id);
 if(!C.SUPABASE_URL||C.SUPABASE_URL.includes("PASTE")){app.innerHTML='<div class="box"><h2>Setup incomplete</h2><p>Paste your Supabase URL and key into config.js.</p></div>';return}
 const sb=supabase.createClient(C.SUPABASE_URL,C.SUPABASE_KEY);
 const D={site_name:"Muhafiz Playz",tagline:"Urdu Subtitled Dramas, Series and Movies",home_title:"Watch the Latest Dramas with Urdu Subtitles",
@@ -69,16 +74,24 @@ function theme(){const r=document.documentElement.style,m={c_accent:"--gold",c_a
 if(S.favicon_url){let l=$("link[rel=icon]");if(l)l.href=S.favicon_url}}
 function chrome(){
 const lg=esc(S.logo_url||"logo.png");
-$("#hdr").innerHTML=(S.announcement?`<div class="ann">${esc(S.announcement)}</div>`:"")+`<div class="hd"><button id="mb" aria-label="Menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button><a class="brand" href="index.html" aria-label="${esc(S.site_name)} Official home"><span class="bt"><b>${esc(S.site_name.toUpperCase())}</b><i>OFFICIAL</i></span><img src="${lg}" alt="${esc(S.site_name)} logo" width="44" height="44" onerror="this.onerror=null;this.src='logo.png'"></a><button id="sb" aria-label="Search"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button></div><form id="sf" class="sf" action="search.html"><input name="q" placeholder="Search dramas or episodes" aria-label="Search" value="${esc(qs.get("q")||"")}"></form>
-<div class="dim" id="dim"></div><aside class="dr" id="dr"><a class="brand" href="index.html"><img src="${lg}" alt="" width="44" height="44" onerror="this.onerror=null;this.src='logo.png'"><span class="bt" style="align-items:flex-start"><b>${esc(S.site_name.toUpperCase())}</b><i>OFFICIAL</i></span></a>
-<h3>Menu</h3><div class="cats"><a href="index.html">Home</a><a href="category.html?c=all">All Series</a></div><h3>Categories</h3><div class="cats">${catList().map(([n,c])=>`<a href="${cUrl(n)}">${esc(n)}<b>${c}</b></a>`).join("")||'<p class="muted">No categories yet.</p>'}</div>
+$("#hdr").innerHTML=(S.announcement?`<div class="ann">${esc(S.announcement)}</div>`:"")+`<div class="hd"><button id="mb" aria-label="Menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button><a class="brand" href="index.html" aria-label="${esc(S.site_name)} Official home"><span class="bt"><b>${esc(S.site_name.toUpperCase())}</b><i>OFFICIAL</i></span><img src="${lg}" alt="${esc(S.site_name)} logo" width="44" height="44" onerror="this.onerror=null;this.src='logo.png'"></a><div class="hr"><button id="tm" aria-label="Switch light or dark mode"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></button><button id="sb" aria-label="Search"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button></div></div><form id="sf" class="sf" action="search.html"><input name="q" placeholder="Search dramas or episodes" aria-label="Search" value="${esc(qs.get("q")||"")}"><div id="sug" class="sug"></div></form>
+<div class="dim" id="dim"></div><aside class="dr" id="dr"><button class="dcl" id="dc" aria-label="Close menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button><a class="brand" href="index.html"><img src="${lg}" alt="" width="44" height="44" onerror="this.onerror=null;this.src='logo.png'"><span class="bt" style="align-items:flex-start"><b>${esc(S.site_name.toUpperCase())}</b><i>OFFICIAL</i></span></a>
+<h3>Menu</h3><div class="cats"><a href="index.html">Home</a><a href="category.html?c=all">All Series</a><a href="category.html?c=mylist">My List</a><a href="#" id="a2hs">Add to Home Screen</a></div><h3>Categories</h3><div class="cats">${catList().map(([n,c])=>`<a href="${cUrl(n)}">${esc(n)}<b>${c}</b></a>`).join("")||'<p class="muted">No categories yet.</p>'}</div>
 <h3>Pages</h3><div class="cats">${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</div></aside>`;
 const dr=$("#dr"),dim=$("#dim"),tg=o=>{dr.classList.toggle("on",o);dim.classList.toggle("on",o)};
-$("#mb").onclick=()=>tg(true);dim.onclick=()=>tg(false);
+$("#mb").onclick=()=>tg(true);dim.onclick=()=>tg(false);$("#dc").onclick=()=>tg(false);
+document.onkeydown=e=>{if(e.key==="Escape")tg(false)};
+$("#tm").onclick=()=>{const l=document.documentElement.classList.toggle("lt");try{localStorage.setItem("mp_theme",l?"light":"dark")}catch(e){}};
+$("#a2hs").onclick=e=>{e.preventDefault();if(window.__ip){window.__ip.prompt()}else alert("To install: open the browser menu (three dots) and tap Add to Home Screen. On iPhone: tap Share, then Add to Home Screen.")};
+const si=$("#sf input"),sg=$("#sug");
+si.oninput=()=>{const q=norm(si.value.trim());if(q.length<2){sg.innerHTML="";return}
+const a=SER.filter(x=>norm(x.title+" "+(x.category||"")+" "+(x.tags||"")).includes(q)).slice(0,5).map(x=>`<a href="${sUrl(x)}">${esc(x.title)}</a>`);
+const b=EPS.filter(e=>{const x=sOf(e.series_id);return x&&norm(eTitle(e,x)).includes(q)}).slice(0,3).map(e=>`<a href="${eUrl(e)}">${esc(eTitle(e,sOf(e.series_id)))}</a>`);
+sg.innerHTML=a.concat(b).join("")};
 $("#sb").onclick=()=>{$("#sf").classList.toggle("on");$("#sf input").focus()};
 if(qs.get("q"))$("#sf").classList.add("on");
 const soc=[["facebook","Facebook"],["telegram","Telegram"],["youtube","YouTube"],["instagram","Instagram"],["twitter","X"],["tiktok","TikTok"]].filter(([k])=>S[k]).map(([k,v])=>`<a href="${esc(S[k])}" target="_blank" rel="noopener">${v}</a>`).join("");
-$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 12</p></footer>`;
+$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 15</p></footer>`;
 }
 const share=()=>{if(!T("show_share"))return"";const u=encodeURIComponent(location.href),t=encodeURIComponent(document.title);return`<div class="share"><a href="https://www.facebook.com/sharer/sharer.php?u=${u}" target="_blank" rel="noopener">Facebook</a><a href="https://twitter.com/intent/tweet?url=${u}&text=${t}" target="_blank" rel="noopener">X</a><a href="https://wa.me/?text=${t}%20${u}" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/share/url?url=${u}&text=${t}" target="_blank" rel="noopener">Telegram</a></div>`};
 
@@ -107,11 +120,12 @@ const block=n=>{done.add(n);const l=eps.filter(e=>e.season===n);return`<div clas
 let tu=0;const body0=compose(txt,m=>{if(m==="trailer"){tu=1;return trailerBox(s.trailer)}if(m==="episodes")return seas.filter(n=>!done.has(n)).map(block).join("")||'<div class="inner"><p class="muted">Episodes are coming soon.</p></div>';const x=/^season(\d+)$/.exec(m);return x?(seas.includes(+x[1])?block(+x[1]):""):null});
 const body=body0+(tu?"":trailerBox(s.trailer));
 app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / ${s.category?`<a href="${cUrl(s.category)}">${esc(s.category)}</a> / `:""}${esc(s.title)}</div>
-<h1>${esc(s.title)} with Urdu Subtitles</h1><p class="meta">${s.category?`<span class="chip">${esc(s.category)}</span>`:""}${s.year?esc(s.year)+" · ":""}${esc(s.status||"")}${s.status?" · ":""}${eps.length} episodes</p>
+<h1>${esc(s.title)} with Urdu Subtitles</h1><button class="btn o fav" id="fv"></button><p class="meta">${s.category?`<span class="chip">${esc(s.category)}</span>`:""}${s.year?esc(s.year)+" · ":""}${esc(s.status||"")}${s.status?" · ":""}${eps.length} episodes</p>
 ${pic(s.banner||s.poster,s.title,"hb",1000)}${ad("header")}
 <article class="box prose">${body}</article>${ad("content")}
 ${T("show_faq")?`<section class="sec"><h2>Frequently Asked Questions</h2>${faq(qa)}</section>`:""}
 ${rel.length?`<section class="sec"><h2>More ${esc(s.category)}</h2>${grid(rel)}</section>`:""}${share()}`;
+const fvb=$("#fv"),fl=()=>{fvb.textContent=getFavs().includes(s.id)?"✓ In My List":"+ Add to My List"};fl();fvb.onclick=()=>{const f=getFavs(),i=f.indexOf(s.id);i<0?f.push(s.id):f.splice(i,1);setFavs(f);fl()};
 ld(faqLd(qa));
 }
 
@@ -135,27 +149,32 @@ app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / ${s.category?`
 ${s.category?`<span class="chip">${esc(s.category)}</span>`:""}<h1>${esc(t)} with Urdu Subtitles</h1><p class="meta">${esc(S.site_name)} Official · ${ago(e.created_at)} · ${Math.max(1,Math.round(words/180))} min read</p>
 ${pic(e.thumb||s.banner||s.poster,t,"hb",1000)}${ad("header")}
 <article class="box prose pbody">${body}</article>
+<div class="vote"><button class="btn o" id="lk">Like (${e.likes||0})</button><button class="btn o" id="dk">Dislike (${e.dislikes||0})</button></div>
 <div class="nav">${pv?`<a class="btn o" href="${eUrl(pv)}">Previous Episode</a>`:"<span></span>"}${nx?`<a class="btn" href="${eUrl(nx)}">Next Episode</a>`:""}</div>
 <section class="box"><h2>All Episodes of ${esc(s.title)}</h2><div class="eps">${sib.map(x=>`<a href="${eUrl(x)}" class="${x.id===e.id?"cur":""}">${sib.some(y=>y.season!==x.season)?`S${x.season} `:""}Episode ${pad(x.number)}</a>`).join("")}</div></section>
 <section class="sec"><h2>You May Also Like</h2>${grid(SER.filter(x=>x.id!==s.id).slice(0,6))}</section>${share()}`;
+const vk="v"+e.id;let vv=null;try{vv=localStorage.getItem(vk)}catch(x){}
+const lk=$("#lk"),dk=$("#dk"),mk=()=>{if(vv){lk.disabled=dk.disabled=true;(vv==="1"?lk:dk).classList.remove("o")}};mk();
+const vote=v=>{if(vv)return;vv=v;try{localStorage.setItem(vk,v)}catch(x){}if(v==="1")e.likes=(e.likes||0)+1;else e.dislikes=(e.dislikes||0)+1;lk.textContent=`Like (${e.likes||0})`;dk.textContent=`Dislike (${e.dislikes||0})`;mk();sb.rpc("mp_vote",{p:e.id,v:v==="1"?1:-1})};
+lk.onclick=()=>vote("1");dk.onclick=()=>vote("-1");
 if(rl){const T0=new Date(e.release_at).getTime(),u=()=>{const d=Math.max(0,Math.floor((T0-Date.now())/1e3));if(!d)return location.reload();const f=(i,v)=>{const x=$(i);if(x)x.textContent=v};f('#cd-d',Math.floor(d/86400));f('#cd-h',Math.floor(d%86400/3600));f('#cd-m',Math.floor(d%3600/60));f('#cd-s',d%60)};u();setInterval(u,1000)}
 try{if(!rl&&!sessionStorage["h"+e.id]){sessionStorage["h"+e.id]=1;sb.rpc("mp_hit_episode",{p:e.id})}}catch(x){}
 }
 
 function category(){
-const c=qs.get("c")||"all",all=c==="all",l=all?SER:SER.filter(s=>slug(s.category)===c);
-const name=all?"All Series":(l[0]?l[0].category:c);
+const c=qs.get("c")||"all",ml=c==="mylist",all=c==="all"||ml,fv=getFavs(),l=ml?SER.filter(s=>fv.includes(s.id)):all?SER:SER.filter(s=>slug(s.category)===c);
+const name=ml?"My List":all?"All Series":(l[0]?l[0].category:c);
 if(!all&&!l.length)return missing();
 seo(`${name} with Urdu Subtitles${sfx()}`,`Watch ${name} with Urdu subtitles. Full episode lists and download links on ${S.site_name} Official.`);
-app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / ${esc(name)}</div><h1>${esc(name)} with Urdu Subtitles</h1>${grid(l)||'<p class="muted">No dramas in this category yet.</p>'}${ad("content")}`;
+app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / ${esc(name)}</div><h1>${esc(name)}${ml?"":" with Urdu Subtitles"}</h1>${grid(l)||(ml?'<p class="muted">Your list is empty. Open a drama and tap Add to My List.</p>':'<p class="muted">No dramas in this category yet.</p>')}${ad("content")}`;
 }
 
 function search(){
-const q=(qs.get("q")||"").trim().toLowerCase();
-seo(`Search${q?" “"+q+"”":""}${sfx()}`,"Search dramas and episodes.");
-const sr=q?SER.filter(s=>(s.title+" "+(s.category||"")+" "+(s.tags||"")).toLowerCase().includes(q)):[];
-const er=q?EPS.filter(e=>{const s=sOf(e.series_id);return s&&eTitle(e,s).toLowerCase().includes(q)}).slice(0,24):[];
-app.innerHTML=`<h1>Search results</h1>${!q?'<p class="muted">Type a name in the search box above.</p>':!sr.length&&!er.length?`<div class="box"><p>No results found for “${esc(q)}”. Try another name.</p></div>`:""}${sr.length?`<section class="sec"><h2>Series</h2>${grid(sr)}</section>`:""}${er.length?`<section class="sec"><h2>Episodes</h2>${rows(er)}</section>`:""}`;
+const raw=(qs.get("q")||"").trim(),q=norm(raw);
+seo(`Search${raw?" “"+raw+"”":""}${sfx()}`,"Search dramas and episodes.");
+const sr=q?SER.filter(s=>norm(s.title+" "+(s.category||"")+" "+(s.tags||"")).includes(q)):[];
+const er=q?EPS.filter(e=>{const s=sOf(e.series_id);return s&&norm(eTitle(e,s)).includes(q)}).slice(0,24):[];
+app.innerHTML=`<h1>Search results</h1>${!q?'<p class="muted">Type a name in the search box above.</p>':!sr.length&&!er.length?`<div class="box"><p>No results found for “${esc(raw)}”. Try another name.</p></div>`:""}${sr.length?`<section class="sec"><h2>Series</h2>${grid(sr)}</section>`:""}${er.length?`<section class="sec"><h2>Episodes</h2>${rows(er)}</section>`:""}`;
 }
 
 function pageText(k){const n=S.site_name+" Official",c=[S.email&&`Email: ${S.email}`,S.whatsapp&&`WhatsApp: ${S.whatsapp}`,S.telegram&&`Telegram: ${S.telegram}`].filter(Boolean).join("\n");
@@ -173,23 +192,33 @@ seo(`${t[0]}${sfx()}`,plain(t[1],155));
 app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / ${esc(t[0])}</div><section class="box prose"><h1>${esc(t[0])}</h1>${md(t[1])}</section>`;
 }
 
-(async()=>{
+const loadData=async()=>{
 try{
 const [a,b,c,d]=await Promise.all([sb.from("mp_series").select("*").eq("published",true).order("created_at",{ascending:false}),sb.from("mp_episodes").select("*").eq("published",true).order("created_at",{ascending:false}),sb.from("mp_categories").select("*").order("sort"),sb.from("mp_settings").select("*")]);
 const er=[a,b,c,d].find(x=>x.error);if(er)throw er.error;
 SER=a.data;EPS=b.data;CATS=c.data;d.data.forEach(r=>{if(r.value!=="")S[r.key]=r.value});
-}catch(err){app.innerHTML=`<div class="box"><h2>Could not load data</h2><p class="muted">${esc(err.message||err)}</p><p>Please check that the database setup is complete and config.js is correct.</p></div>`;return}
-S.site_name=String(S.site_name||"").replace(/\s*official\s*$/i,"").trim()||"Muhafiz Playz";
-theme();chrome();
-if(S.noindex==="1")meta("robots","noindex,nofollow");
+}catch(err){let ok=0;try{const r=await fetch("data.json?"+Date.now());if(!r.ok)throw 0;const j=await r.json(),pub=x=>x.published!==false,ds=(x,y)=>String(y.created_at).localeCompare(String(x.created_at));SER=(j.series||[]).filter(pub).sort(ds);EPS=(j.episodes||[]).filter(pub).sort(ds);CATS=(j.categories||[]).sort((x,y)=>x.sort-y.sort);(j.settings||[]).forEach(r=>{if(r.value!=="")S[r.key]=r.value});ok=1}catch(e2){}
+if(!ok)throw err}
+};
+const render=()=>{$$("script[type='application/ld+json']").forEach(x=>x.remove());S.site_name=String(S.site_name||"").replace(/\s*official\s*$/i,"").trim()||"Muhafiz Playz";theme();chrome();if(S.noindex==="1")meta("robots","noindex,nofollow");
 if(S.maintenance==="1"){app.innerHTML=`<div class="mm"><h1>${esc(S.site_name)} Official</h1><p>${esc(S.maintenance_msg||"We are performing maintenance. Please check back soon.")}</p></div>`;return}
+({home,series,watch,category,search,page}[P]||missing)();
+$$(".adraw").forEach(x=>x.append(frag(S["ad_html_"+x.dataset.r])));
+if(S.adsense_client)$$(".adsbygoogle").forEach(()=>{try{(window.adsbygoogle=window.adsbygoogle||[]).push({})}catch(e){}});
+};
+const extras=()=>{
 if(S.ga_id){addScript("https://www.googletagmanager.com/gtag/js?id="+encodeURIComponent(S.ga_id));window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag("js",new Date());gtag("config",S.ga_id)}
 if(S.clarity_id){(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y)})(window,document,"clarity","script",S.clarity_id)}
 if(S.adsense_client)addScript("https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client="+encodeURIComponent(S.adsense_client),{crossorigin:"anonymous"});
 if(S.head_code)document.head.append(frag(S.head_code));
-({home,series,watch,category,search,page}[P]||missing)();
-$$(".adraw").forEach(x=>x.append(frag(S["ad_html_"+x.dataset.r])));
 if(S.body_code)document.body.append(frag(S.body_code));
-if(S.adsense_client)$$(".adsbygoogle").forEach(()=>{try{(window.adsbygoogle=window.adsbygoogle||[]).push({})}catch(e){}});
+};
+(async()=>{
+let c=null;try{c=JSON.parse(localStorage.getItem("mp_cache")||"null")}catch(e){}
+const snap=()=>JSON.stringify({SER,EPS,CATS,S}),save=()=>{try{localStorage.setItem("mp_cache",snap())}catch(e){}};
+if(c&&c.SER){SER=c.SER;EPS=c.EPS||[];CATS=c.CATS||[];S={...D,...c.S};const before=snap();render();extras();
+try{await loadData();if(snap()!==before){save();render()}else save()}catch(e){}}
+else{try{await loadData()}catch(err){app.innerHTML=`<div class="box"><h2>Could not load data</h2><p class="muted">${esc(err.message||err)}</p><p>Please check that the database setup is complete and config.js is correct.</p></div>`;return}
+save();render();extras()}
 })();
 })();
