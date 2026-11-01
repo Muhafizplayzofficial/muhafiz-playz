@@ -7,7 +7,6 @@ const BASE=location.origin+location.pathname.replace(/\/[^/]*$/,"")+"/";
 try{if(localStorage.getItem("mp_theme")==="light")document.documentElement.classList.add("lt")}catch(e){}
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();window.__ip=e});
 const norm=s=>String(s||"").toLowerCase().replace(/ı/g,"i").normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-const getFavs=()=>{try{return JSON.parse(localStorage.getItem("mp_fav")||"[]")}catch(e){return[]}},setFavs=f=>{try{localStorage.setItem("mp_fav",JSON.stringify(f))}catch(e){}};
 const app=$("#app"),qs=new URLSearchParams(location.search),P=document.body.dataset.page;
 if(document.body.dataset.s)qs.set("s",document.body.dataset.s);if(document.body.dataset.id)qs.set("id",document.body.dataset.id);
 if(!C.SUPABASE_URL||C.SUPABASE_URL.includes("PASTE")){app.innerHTML='<div class="box"><h2>Setup incomplete</h2><p>Paste your Supabase URL and key into config.js.</p></div>';return}
@@ -76,7 +75,7 @@ function chrome(){
 const lg=esc(S.logo_url||"logo.png");
 $("#hdr").innerHTML=(S.announcement?`<div class="ann">${esc(S.announcement)}</div>`:"")+`<div class="hd"><button id="mb" aria-label="Menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button><a class="brand" href="index.html" aria-label="${esc(S.site_name)} Official home"><span class="bt"><b>${esc(S.site_name.toUpperCase())}</b><i>OFFICIAL</i></span><img src="${lg}" alt="${esc(S.site_name)} logo" width="44" height="44" onerror="this.onerror=null;this.src='logo.png'"></a><div class="hr"><button id="tm" aria-label="Switch light or dark mode"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></button><button id="sb" aria-label="Search"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button></div></div><form id="sf" class="sf" action="search.html"><input name="q" placeholder="Search dramas or episodes" aria-label="Search" value="${esc(qs.get("q")||"")}"><div id="sug" class="sug"></div></form>
 <div class="dim" id="dim"></div><aside class="dr" id="dr"><button class="dcl" id="dc" aria-label="Close menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button><a class="brand" href="index.html"><img src="${lg}" alt="" width="44" height="44" onerror="this.onerror=null;this.src='logo.png'"><span class="bt" style="align-items:flex-start"><b>${esc(S.site_name.toUpperCase())}</b><i>OFFICIAL</i></span></a>
-<h3>Menu</h3><div class="cats"><a href="index.html">Home</a><a href="category.html?c=all">All Series</a><a href="category.html?c=mylist">My List</a><a href="#" id="a2hs">Add to Home Screen</a></div><h3>Categories</h3><div class="cats">${catList().map(([n,c])=>`<a href="${cUrl(n)}">${esc(n)}<b>${c}</b></a>`).join("")||'<p class="muted">No categories yet.</p>'}</div>
+<h3>Menu</h3><div class="cats"><a href="index.html">Home</a><a href="category.html?c=all">All Series</a><a href="#" id="a2hs">Add to Home Screen</a></div><h3>Categories</h3><div class="cats">${catList().map(([n,c])=>`<a href="${cUrl(n)}">${esc(n)}<b>${c}</b></a>`).join("")||'<p class="muted">No categories yet.</p>'}</div>
 <h3>Pages</h3><div class="cats">${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</div></aside>`;
 const dr=$("#dr"),dim=$("#dim"),tg=o=>{dr.classList.toggle("on",o);dim.classList.toggle("on",o)};
 $("#mb").onclick=()=>tg(true);dim.onclick=()=>tg(false);$("#dc").onclick=()=>tg(false);
@@ -91,7 +90,7 @@ sg.innerHTML=a.concat(b).join("")};
 $("#sb").onclick=()=>{$("#sf").classList.toggle("on");$("#sf input").focus()};
 if(qs.get("q"))$("#sf").classList.add("on");
 const soc=[["facebook","Facebook"],["telegram","Telegram"],["youtube","YouTube"],["instagram","Instagram"],["twitter","X"],["tiktok","TikTok"]].filter(([k])=>S[k]).map(([k,v])=>`<a href="${esc(S[k])}" target="_blank" rel="noopener">${v}</a>`).join("");
-$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 15</p></footer>`;
+$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 16</p></footer>`;
 }
 const share=()=>{if(!T("show_share"))return"";const u=encodeURIComponent(location.href),t=encodeURIComponent(document.title);return`<div class="share"><a href="https://www.facebook.com/sharer/sharer.php?u=${u}" target="_blank" rel="noopener">Facebook</a><a href="https://twitter.com/intent/tweet?url=${u}&text=${t}" target="_blank" rel="noopener">X</a><a href="https://wa.me/?text=${t}%20${u}" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/share/url?url=${u}&text=${t}" target="_blank" rel="noopener">Telegram</a></div>`};
 
@@ -120,12 +119,11 @@ const block=n=>{done.add(n);const l=eps.filter(e=>e.season===n);return`<div clas
 let tu=0;const body0=compose(txt,m=>{if(m==="trailer"){tu=1;return trailerBox(s.trailer)}if(m==="episodes")return seas.filter(n=>!done.has(n)).map(block).join("")||'<div class="inner"><p class="muted">Episodes are coming soon.</p></div>';const x=/^season(\d+)$/.exec(m);return x?(seas.includes(+x[1])?block(+x[1]):""):null});
 const body=body0+(tu?"":trailerBox(s.trailer));
 app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / ${s.category?`<a href="${cUrl(s.category)}">${esc(s.category)}</a> / `:""}${esc(s.title)}</div>
-<h1>${esc(s.title)} with Urdu Subtitles</h1><button class="btn o fav" id="fv"></button><p class="meta">${s.category?`<span class="chip">${esc(s.category)}</span>`:""}${s.year?esc(s.year)+" · ":""}${esc(s.status||"")}${s.status?" · ":""}${eps.length} episodes</p>
+<h1>${esc(s.title)} with Urdu Subtitles</h1><p class="meta">${s.category?`<span class="chip">${esc(s.category)}</span>`:""}${s.year?esc(s.year)+" · ":""}${esc(s.status||"")}${s.status?" · ":""}${eps.length} episodes</p>
 ${pic(s.banner||s.poster,s.title,"hb",1000)}${ad("header")}
 <article class="box prose">${body}</article>${ad("content")}
 ${T("show_faq")?`<section class="sec"><h2>Frequently Asked Questions</h2>${faq(qa)}</section>`:""}
 ${rel.length?`<section class="sec"><h2>More ${esc(s.category)}</h2>${grid(rel)}</section>`:""}${share()}`;
-const fvb=$("#fv"),fl=()=>{fvb.textContent=getFavs().includes(s.id)?"✓ In My List":"+ Add to My List"};fl();fvb.onclick=()=>{const f=getFavs(),i=f.indexOf(s.id);i<0?f.push(s.id):f.splice(i,1);setFavs(f);fl()};
 ld(faqLd(qa));
 }
 
@@ -149,24 +147,19 @@ app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / ${s.category?`
 ${s.category?`<span class="chip">${esc(s.category)}</span>`:""}<h1>${esc(t)} with Urdu Subtitles</h1><p class="meta">${esc(S.site_name)} Official · ${ago(e.created_at)} · ${Math.max(1,Math.round(words/180))} min read</p>
 ${pic(e.thumb||s.banner||s.poster,t,"hb",1000)}${ad("header")}
 <article class="box prose pbody">${body}</article>
-<div class="vote"><button class="btn o" id="lk">Like (${e.likes||0})</button><button class="btn o" id="dk">Dislike (${e.dislikes||0})</button></div>
 <div class="nav">${pv?`<a class="btn o" href="${eUrl(pv)}">Previous Episode</a>`:"<span></span>"}${nx?`<a class="btn" href="${eUrl(nx)}">Next Episode</a>`:""}</div>
 <section class="box"><h2>All Episodes of ${esc(s.title)}</h2><div class="eps">${sib.map(x=>`<a href="${eUrl(x)}" class="${x.id===e.id?"cur":""}">${sib.some(y=>y.season!==x.season)?`S${x.season} `:""}Episode ${pad(x.number)}</a>`).join("")}</div></section>
 <section class="sec"><h2>You May Also Like</h2>${grid(SER.filter(x=>x.id!==s.id).slice(0,6))}</section>${share()}`;
-const vk="v"+e.id;let vv=null;try{vv=localStorage.getItem(vk)}catch(x){}
-const lk=$("#lk"),dk=$("#dk"),mk=()=>{if(vv){lk.disabled=dk.disabled=true;(vv==="1"?lk:dk).classList.remove("o")}};mk();
-const vote=v=>{if(vv)return;vv=v;try{localStorage.setItem(vk,v)}catch(x){}if(v==="1")e.likes=(e.likes||0)+1;else e.dislikes=(e.dislikes||0)+1;lk.textContent=`Like (${e.likes||0})`;dk.textContent=`Dislike (${e.dislikes||0})`;mk();sb.rpc("mp_vote",{p:e.id,v:v==="1"?1:-1})};
-lk.onclick=()=>vote("1");dk.onclick=()=>vote("-1");
 if(rl){const T0=new Date(e.release_at).getTime(),u=()=>{const d=Math.max(0,Math.floor((T0-Date.now())/1e3));if(!d)return location.reload();const f=(i,v)=>{const x=$(i);if(x)x.textContent=v};f('#cd-d',Math.floor(d/86400));f('#cd-h',Math.floor(d%86400/3600));f('#cd-m',Math.floor(d%3600/60));f('#cd-s',d%60)};u();setInterval(u,1000)}
 try{if(!rl&&!sessionStorage["h"+e.id]){sessionStorage["h"+e.id]=1;sb.rpc("mp_hit_episode",{p:e.id})}}catch(x){}
 }
 
 function category(){
-const c=qs.get("c")||"all",ml=c==="mylist",all=c==="all"||ml,fv=getFavs(),l=ml?SER.filter(s=>fv.includes(s.id)):all?SER:SER.filter(s=>slug(s.category)===c);
-const name=ml?"My List":all?"All Series":(l[0]?l[0].category:c);
+const c=qs.get("c")||"all",all=c==="all",l=all?SER:SER.filter(s=>slug(s.category)===c);
+const name=all?"All Series":(l[0]?l[0].category:c);
 if(!all&&!l.length)return missing();
 seo(`${name} with Urdu Subtitles${sfx()}`,`Watch ${name} with Urdu subtitles. Full episode lists and download links on ${S.site_name} Official.`);
-app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / ${esc(name)}</div><h1>${esc(name)}${ml?"":" with Urdu Subtitles"}</h1>${grid(l)||(ml?'<p class="muted">Your list is empty. Open a drama and tap Add to My List.</p>':'<p class="muted">No dramas in this category yet.</p>')}${ad("content")}`;
+app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / ${esc(name)}</div><h1>${esc(name)} with Urdu Subtitles</h1>${grid(l)||'<p class="muted">No dramas in this category yet.</p>'}${ad("content")}`;
 }
 
 function search(){
