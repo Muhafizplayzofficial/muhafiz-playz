@@ -14,7 +14,7 @@ if(!s)f();else if(/^\[(episodes|player|download|dramas|trailer|season\s*\d+)\]$/
 f();return o};
 const TOG=[["1","Yes (on)"],["0","No (off)"]];
 const G={
-general:["General",[["site_name","Site name","text","Muhafiz Playz"],["tagline","Tagline","text"],["announcement","Announcement bar at the very top (empty = hidden)","text"],["logo_url","Header logo URL (empty = built-in logo)","text"],["favicon_url","Favicon URL (empty = built-in icon)","text"],["footer_text","Extra footer line","text"],["email","Contact email","text"],["whatsapp","WhatsApp number","text"],["whatsapp_group","WhatsApp channel or group link","text"],["maintenance","Maintenance mode (site hidden, message only)","chk"],["maintenance_msg","Maintenance message","text"]]],
+general:["General",[["site_name","Site name","text","Muhafiz Playz"],["tagline","Tagline","text"],["announcement","Announcement bar at the very top (empty = hidden)","text"],["logo_url","Header logo URL (empty = built-in logo)","text"],["favicon_url","Favicon URL (empty = built-in icon)","text"],["footer_text","Extra footer line","text"],["email","Contact email","text"],["whatsapp","WhatsApp number","text"],["whatsapp_group","WhatsApp channel or group link","text"],["show_wa","WhatsApp join banner (needs the channel link above)","tog"],["wa_banner","WhatsApp banner image URL (optional; empty = built-in banner)","text"],["maintenance","Maintenance mode (site hidden, message only)","chk"],["maintenance_msg","Maintenance message","text"]]],
 home:["Home & Layout",[["home_title","Home page main heading (H1)","text"],["home_content","Home page long text. Use ## for headings, - for lists, **bold**. Write [dramas] on its own line where the drama images should appear.","area",12],["show_sidebar","Sidebar (categories and popular)","tog"],["show_popular","Popular Series in sidebar","tog"],["show_faq","Show FAQ","tog"],["show_share","Bottom share bar","tog"],["latest_count","Latest episodes to show","num","12"],["popular_count","Popular series to show","num","6"]]],
 look:["Appearance",[["c_accent","Primary color (gold)","color","#ffc400"],["c_accent2","Secondary color (orange)","color","#ff7a00"],["c_bg","Background","color","#0f0d12"],["c_card","Card and box color","color","#1a171f"],["c_text","Text color","color","#f4efe6"]]],
 players:["Players & Downloads",[["server1_label","Server 1 name","text","Server 1"],["server2_label","Server 2 name","text","Server 2"],["server3_label","Server 3 name","text","Server 3"],["server4_label","Server 4 name","text","Server 4"],["player_note","Note under the player","text","If the video does not play, try another server."],["show_newtab","Show the Open in new tab link","tog"],["dl_title","Download box heading","text","Download"]]],
@@ -28,7 +28,7 @@ episodes:{t:"mp_episodes",l:"Episode",f:[["series_id","Drama","ser"],["season","
 categories:{t:"mp_categories",l:"Category",f:[["name","Category name","text"],["sort","Order (number)","num",0]],n:r=>r.name}};
 const BASE=[["H2","\n## ","\n","Big heading"],["H3","\n### ","\n","Small heading"],["Bold","**","**","text"],["List","\n- ","","item"],["Link","L"],["Photo","I"]];
 const TB={series:[...BASE,["[episodes]","\n[episodes]\n","",""],["Season block","S"],["[trailer]","\n[trailer]\n","",""]],episodes:[...BASE,["[player]","\n[player]\n","",""],["[download]","\n[download]\n","",""],["[trailer]","\n[trailer]\n","",""]]};
-const NAV=[["dash","Dashboard"],["h","Content"],["series","Dramas"],["episodes","Episodes"],["categories","Categories"],["h","Settings"],...Object.entries(G).map(([k,v])=>["s:"+k,v[0]]),["h","System"],["tools","Tools & Backup"]];
+const NAV=[["dash","Dashboard"],["h","Content"],["series","Dramas"],["episodes","Episodes"],["categories","Categories"],["requests","Requests"],["h","Settings"],...Object.entries(G).map(([k,v])=>["s:"+k,v[0]]),["h","System"],["tools","Tools & Backup"]];
 
 function login(m=""){root.innerHTML=`<div class="lg"><img src="logo.png" alt="" width="64" height="64"><h1>Admin login</h1><div class="f"><div><label>Email</label><input id="em" type="email" autocomplete="username"></div><div><label>Password</label><input id="pw" type="password" autocomplete="current-password"></div><p class="msg">${esc(m)}</p><button class="btn" id="go">Log in</button></div></div>`;
 const go=async()=>{const{error}=await sb.auth.signInWithPassword({email:$("#em").value.trim(),password:$("#pw").value});error?login(error.message):start()};$("#go").onclick=go;$("#pw").onkeydown=e=>{if(e.key==="Enter")go()}}
@@ -46,22 +46,31 @@ const tg=o=>{$("#side").classList.toggle("on",o);$("#dim").classList.toggle("on"
 $("#mb").onclick=()=>tg(true);$("#dim").onclick=()=>tg(false);
 $("#lo").onclick=async()=>{await sb.auth.signOut();login()};
 $$("[data-v]").forEach(a=>a.onclick=()=>go(a.dataset.v));
-if(view==="dash")dash();else if(view==="tools")tools();else if(view.startsWith("s:"))settings(view.slice(2));else crud();}
+if(view==="dash")dash();else if(view==="tools")tools();else if(view.startsWith("s:"))settings(view.slice(2));else if(view==="requests")requests();else crud();}
 const go=(v,id=null)=>{view=v;sel=id;draw();scrollTo(0,0)};
 
 async function dash(){
 const{data,error}=await sb.from("mp_episodes").select("id,series_id,season,number,views,created_at").order("created_at",{ascending:false});
 if(error)return $("#body").innerHTML=`<div class="box"><p class="msg">${esc(error.message)}</p><p>Please run supabase-update.sql in Supabase first.</p></div>`;
 const nm=r=>`${(SER.find(s=>s.id===r.series_id)||{}).title||"?"}, S${r.season} E${r.number}`,tv=data.reduce((n,e)=>n+(e.views||0),0);
+const since=new Date(Date.now()-13*864e5).toISOString().slice(0,10),dd=await sb.from("mp_daily").select("day,views").gte("day",since);
+const days=[...Array(14)].map((_,i)=>new Date(Date.now()-(13-i)*864e5).toISOString().slice(0,10)),dm={};(dd.data||[]).forEach(r=>{dm[r.day]=(dm[r.day]||0)+r.views});const mx=Math.max(1,...days.map(d=>dm[d]||0));
+const chart=`<div class="box"><h2>Views, last 14 days</h2><div class="cols">${days.map(d=>`<div style="height:${Math.max(4,Math.round((dm[d]||0)/mx*100))}%" title="${d}: ${dm[d]||0}"><small>${dm[d]||0}</small></div>`).join("")}</div><p class="hint">Daily counting starts after supabase-update4.sql is run.</p></div>`;
+const bs=SER.map(s=>({t:s.title,v:data.filter(e=>e.series_id===s.id).reduce((n,e)=>n+(e.views||0),0)})).sort((p,q)=>q.v-p.v),bm=Math.max(1,...bs.map(x=>x.v));
+const bars=`<div class="box"><h2>Views by drama</h2>${bs.map(x=>`<div class="bar"><span>${esc(x.t)}</span><i style="width:${Math.max(2,Math.round(x.v/bm*100))}%"></i><b>${x.v}</b></div>`).join("")||'<p class="muted">No dramas yet.</p>'}</div>`;
 const ck=[["AdSense publisher ID",S.adsense_client],["Google Analytics ID",S.ga_id],["Contact email",S.email],["WhatsApp channel link",S.whatsapp_group],["Facebook or Telegram link",S.facebook||S.telegram],["Home page long text",S.home_content]];
 $("#body").innerHTML=`<div class="stats"><div class="stat"><b>${SER.length}</b>Dramas</div><div class="stat"><b>${data.length}</b>Episodes</div><div class="stat"><b>${CATS.length}</b>Categories</div><div class="stat"><b>${tv}</b>Total views</div></div>
 <div class="box"><h2>Quick actions</h2><button class="btn" data-g="series">Add drama</button><button class="btn" data-g="episodes">Add episode</button><button class="btn o" data-g="s:general">Settings</button></div>
-<div class="box"><h2>Most viewed episodes</h2>${[...data].sort((a,b)=>(b.views||0)-(a.views||0)).slice(0,5).map(r=>`<div class="li"><span>${esc(nm(r))}</span><b>${r.views||0}</b></div>`).join("")||'<p class="muted">No episodes yet.</p>'}</div>
+${chart}${bars}<div class="box"><h2>Most viewed episodes</h2>${[...data].sort((a,b)=>(b.views||0)-(a.views||0)).slice(0,5).map(r=>`<div class="li"><span>${esc(nm(r))}</span><b>${r.views||0}</b></div>`).join("")||'<p class="muted">No episodes yet.</p>'}</div>
 <div class="box"><h2>Latest episodes</h2>${data.slice(0,5).map(r=>`<div class="li"><span>${esc(nm(r))}</span><button class="btn o sm" data-ed="${r.id}">Edit</button></div>`).join("")||'<p class="muted">No episodes yet.</p>'}</div>
 <div class="box"><h2>Setup checklist</h2>${ck.map(([l,v])=>`<div class="ck"><span>${l}</span><span class="${v?"ok":"no"}">${v?"Done":"Pending"}</span></div>`).join("")}</div>`;
 $$("[data-g]").forEach(b=>b.onclick=()=>go(b.dataset.g));$$("[data-ed]").forEach(b=>b.onclick=()=>go("episodes",+b.dataset.ed))}
 
 const shrink=(f,max)=>new Promise(r=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/im.width),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);c.toBlob(b=>r(b||f),"image/webp",0.78)};im.onerror=()=>r(f);im.src=URL.createObjectURL(f)});
+async function requests(){const{data,error}=await sb.from("mp_requests").select("*").order("created_at",{ascending:false});
+if(error)return $("#body").innerHTML=`<div class="box"><p class="msg">${esc(error.message)}</p><p>Please run supabase-update4.sql in Supabase first.</p></div>`;
+$("#body").innerHTML=`<div class="box"><h2>Drama requests (${data.length})</h2>${data.map(r=>`<div class="li"><span><b>${esc(r.title)}</b>${r.note?`<br><small class="muted">${esc(r.note)}</small>`:""}<br><small class="muted">${new Date(r.created_at).toLocaleString()}</small></span><button class="btn o sm" data-rd="${r.id}">Done</button></div>`).join("")||'<p class="muted">No requests yet.</p>'}</div>`;
+$$("[data-rd]").forEach(b=>b.onclick=async()=>{await sb.from("mp_requests").delete().eq("id",+b.dataset.rd);requests()})}
 function ins(ta,b,a,ph){const s=ta.selectionStart,e=ta.selectionEnd,t=ta.value.slice(s,e)||ph;ta.setRangeText(b+t+a,s,e,"end");ta.focus()}
 async function crud(){
 const tab=view,sp=SPEC[tab];

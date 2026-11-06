@@ -67,8 +67,21 @@ const faq=l=>l.map(([q,a])=>`<details><summary>${esc(q)}</summary><p>${esc(a)}</
 const faqLd=l=>({"@context":"https://schema.org","@type":"FAQPage",mainEntity:l.map(([q,a])=>({"@type":"Question",name:q,acceptedAnswer:{"@type":"Answer",text:a}}))});
 const ld=o=>{const l=document.createElement("script");l.type="application/ld+json";l.textContent=JSON.stringify(o);document.head.appendChild(l)};
 const missing=()=>{seo("Page not found"+sfx(),"This page could not be found.");app.innerHTML=`<div class="box"><h1>Page not found</h1><p>Sorry, this page does not exist.</p><a class="btn" href="index.html">Back to home</a></div>`};
-const links=[["about","About Us"],["contact","Contact Us"],["disclaimer","Disclaimer"],["dmca","DMCA"],["privacy","Privacy Policy"],["terms","Terms and Conditions"]];
+const links=[["about","About Us"],["contact","Contact Us"],["request","Request a Drama"],["disclaimer","Disclaimer"],["dmca","DMCA"],["privacy","Privacy Policy"],["terms","Terms and Conditions"]];
 
+const waBanner=()=>{if(!S.whatsapp_group||S.show_wa==="0")return"";
+if(S.wa_banner)return`<a class="wab" href="${esc(S.whatsapp_group)}" target="_blank" rel="noopener">${pic(S.wa_banner,"Join our WhatsApp channel","",900)}</a>`;
+if(!document.getElementById("nq")){const l=document.createElement("link");l.id="nq";l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@600&display=swap";document.head.appendChild(l)}
+return`<a class="wab wab-d" href="${esc(S.whatsapp_group)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg><span class="ur">واٹس ایپ گروپ جوائن کریں</span><small>Join our WhatsApp Channel</small></a>`};
+function requestPage(){
+seo("Request a Drama"+sfx(),"Tell us which drama you would like to see on "+S.site_name+" Official.");
+app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / Request a Drama</div><section class="box"><h1>Request a Drama</h1><p>Tell us which drama you would like us to add. We read every request.</p><div class="f"><div><label for="rq1">Drama name</label><input id="rq1" maxlength="120" autocomplete="off"></div><div><label for="rq2">Note (optional)</label><textarea id="rq2" rows="3" maxlength="500"></textarea></div><input id="rq0" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true"><button class="btn" id="rqs">Send request</button><p class="msg" id="rqm"></p></div></section>`;
+$("#rqs").onclick=async()=>{const t=$("#rq1").value.trim(),n=$("#rq2").value.trim(),m=$("#rqm");
+if($("#rq0").value)return;if(t.length<2)return m.textContent="Please enter the drama name.";
+let last=0;try{last=+localStorage.getItem("mp_rq")||0}catch(x){}if(Date.now()-last<60000)return m.textContent="Please wait a minute before sending another request.";
+$("#rqs").disabled=true;const r=await sb.from("mp_requests").insert({title:t.slice(0,120),note:n?n.slice(0,500):null});
+if(r.error){$("#rqs").disabled=false;return m.textContent="Sorry, your request could not be sent. Please try again later."}
+try{localStorage.setItem("mp_rq",Date.now())}catch(x){}$("#rq1").value="";$("#rq2").value="";m.textContent="Thank you! We received your request.";$("#rqs").disabled=false}}
 function theme(){const r=document.documentElement.style,m={c_accent:"--gold",c_accent2:"--org",c_bg:"--bg",c_card:"--card",c_text:"--txt"};for(const k in m)if(S[k])r.setProperty(m[k],S[k]);r.setProperty("--grad",`linear-gradient(135deg,${S.c_accent||"#ffd60a"},${S.c_accent2||"#ff7a00"})`);
 if(S.favicon_url){let l=$("link[rel=icon]");if(l)l.href=S.favicon_url}}
 function chrome(){
@@ -90,7 +103,7 @@ sg.innerHTML=a.concat(b).join("")};
 $("#sb").onclick=()=>{$("#sf").classList.toggle("on");$("#sf input").focus()};
 if(qs.get("q"))$("#sf").classList.add("on");
 const soc=[["facebook","Facebook"],["telegram","Telegram"],["youtube","YouTube"],["instagram","Instagram"],["twitter","X"],["tiktok","TikTok"]].filter(([k])=>S[k]).map(([k,v])=>`<a href="${esc(S[k])}" target="_blank" rel="noopener">${v}</a>`).join("");
-$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 16</p></footer>`;
+$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 17</p></footer>`;
 }
 const share=()=>{if(!T("show_share"))return"";const u=encodeURIComponent(location.href),t=encodeURIComponent(document.title);return`<div class="share"><a href="https://www.facebook.com/sharer/sharer.php?u=${u}" target="_blank" rel="noopener">Facebook</a><a href="https://twitter.com/intent/tweet?url=${u}&text=${t}" target="_blank" rel="noopener">X</a><a href="https://wa.me/?text=${t}%20${u}" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/share/url?url=${u}&text=${t}" target="_blank" rel="noopener">Telegram</a></div>`};
 
@@ -100,7 +113,7 @@ seo(`${n} Official | ${S.home_title}`,`Watch and download the latest dramas and 
 const latest=EPS.length?`<section class="sec"><h2>Latest Episodes</h2>${rows(EPS.slice(0,+S.latest_count||12))}</section>`:`<div class="box"><p>No dramas have been added yet.</p></div>`;
 const dr=SER.slice(0,+S.dramas_count||20).map(s=>`<a class="dc" href="${sUrl(s)}">${pic(s.banner||s.poster,s.title)}<span>${esc(s.title)}</span></a><hr class="dsep">`).join("");
 let hc=S.home_content;if(!/^[ \t]*\[dramas\][ \t]*$/mi.test(hc))hc=withMarker(hc,"dramas");
-const main=`<section class="box prose" style="margin-top:0"><h1>${esc(S.home_title)}</h1>${compose(hc,m=>m==="dramas"?`<hr class="dsep">${dr}`:null)}</section>`+ad("content")+
+const main=`<section class="box prose" style="margin-top:0"><h1>${esc(S.home_title)}</h1>${compose(hc,m=>m==="dramas"?waBanner()+`<hr class="dsep">${dr}`:null)}</section>`+ad("content")+
 latest+ad("content")+(T("show_faq")?`<section class="sec"><h2>Frequently Asked Questions</h2>${faq(D.faq)}</section>`:"");
 const aside=`<aside>${ad("sidebar")}<div class="box"><h2>Categories</h2><div class="cats">${cl.map(([c,k])=>`<a href="${cUrl(c)}">${esc(c)}<b>${k}</b></a>`).join("")||'<p class="muted">Coming soon.</p>'}</div></div>${T("show_popular")&&pop.length?`<div class="box"><h2>Popular Series</h2>${pop.map(s=>`<a class="pr" href="${sUrl(s)}">${pic(s.poster||s.banner,s.title,"",120)}<div><h3>${esc(s.title)}</h3><small>${eOf(s.id).length} episodes</small></div></a>`).join("")}</div>`:""}</aside>`;
 app.innerHTML=ad("header")+`<div class="${side?"two":""}"><div>${main}</div>${side?aside:""}</div>`;
@@ -116,7 +129,7 @@ seo(s.meta_title||`${s.title} Urdu Subtitles All Episodes${sfx()}`,s.meta_desc||
 const rel=SER.filter(x=>x.id!==s.id&&x.category===s.category).slice(0,6),done=new Set();
 const qa=[[`Where can I watch ${s.title} with Urdu subtitles?`,`All available episodes of ${s.title} are listed on this page. Scroll to your season and tap an episode to watch or download it.`],[`How many episodes of ${s.title} are available?`,`${eps.length} episode${eps.length==1?" is":"s are"} available right now. New episodes are added as soon as they are ready.`]];
 const block=n=>{done.add(n);const l=eps.filter(e=>e.season===n);return`<div class="inner"><h2>${esc(s.title)} Season ${n} Episodes</h2><div class="eps">${l.map((e,j)=>`<a href="${eUrl(e)}">Episode ${pad(e.number)}${soon(e)?"<small>Coming soon</small>":n===seas[seas.length-1]&&j===l.length-1?"<small>Latest</small>":""}</a>`).join("")}</div></div>`};
-let tu=0;const body0=compose(txt,m=>{if(m==="trailer"){tu=1;return trailerBox(s.trailer)}if(m==="episodes")return seas.filter(n=>!done.has(n)).map(block).join("")||'<div class="inner"><p class="muted">Episodes are coming soon.</p></div>';const x=/^season(\d+)$/.exec(m);return x?(seas.includes(+x[1])?block(+x[1]):""):null});
+let tu=0;const body0=compose(txt,m=>{if(m==="trailer"){tu=1;return trailerBox(s.trailer)}if(m==="episodes")return waBanner()+ seas.filter(n=>!done.has(n)).map(block).join("")||'<div class="inner"><p class="muted">Episodes are coming soon.</p></div>';const x=/^season(\d+)$/.exec(m);return x?(seas.includes(+x[1])?block(+x[1]):""):null});
 const body=body0+(tu?"":trailerBox(s.trailer));
 app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / ${s.category?`<a href="${cUrl(s.category)}">${esc(s.category)}</a> / `:""}${esc(s.title)}</div>
 <h1>${esc(s.title)} with Urdu Subtitles</h1><p class="meta">${s.category?`<span class="chip">${esc(s.category)}</span>`:""}${s.year?esc(s.year)+" · ":""}${esc(s.status||"")}${s.status?" · ":""}${eps.length} episodes</p>
@@ -139,7 +152,7 @@ const player=!srv.length?"":`<div class="flat">${srv.map(x=>`<h2 class="sh">${es
 const dl=!dls.length?"":`<div class="flat"><h2>${esc(S.dl_title||"Download")} ${esc(t)}</h2><div class="dl">${dls.map(([k,l])=>`<a class="${k==="dlbluray"?"b":""}" href="${esc(e[k])}" target="_blank" rel="noopener nofollow">Download ${l}</a>`).join("")||'<p class="muted">Download links will be added soon.</p>'}</div>${S.whatsapp_group?`<a class="btn wa" href="${esc(S.whatsapp_group)}" target="_blank" rel="noopener">Join our WhatsApp Channel</a>`:""}</div>`;
 const rl=soon(e),tr=e.trailer||s.trailer;let tu=0;
 const cs=`<div class="inner soon"><h2>Coming Soon</h2><p class="muted">${esc(t)} will be released on <b>${new Date(e.release_at).toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"})}</b></p><div class="cd"><div><b id="cd-d">0</b>Days</div><div><b id="cd-h">0</b>Hours</div><div><b id="cd-m">0</b>Minutes</div><div><b id="cd-s">0</b>Seconds</div></div></div>`;
-const body0=compose(txt,m=>m==="trailer"?(tu=1,trailerBox(tr)):m==="player"?(rl?cs:player)+(hasD||rl?"":dl+ad("content")):m==="download"?(rl?"":dl+ad("content")):null);
+const body0=compose(txt,m=>m==="trailer"?(tu=1,trailerBox(tr)):m==="player"?waBanner()+(rl?cs:player)+(hasD||rl?"":dl+ad("content")):m==="download"?(rl?"":dl+ad("content")):null);
 const body=body0+(tu?"":trailerBox(tr));
 const words=txt.split(/\s+/).length;
 seo(`${t} with Urdu Subtitles${sfx()}`,e.meta_desc||plain(txt,155),e.thumb||s.banner||s.poster,{"@context":"https://schema.org","@type":"TVEpisode",name:t,episodeNumber:e.number,seasonNumber:e.season,image:abs(e.thumb||s.banner||s.poster),datePublished:e.created_at,description:plain(txt,300),inLanguage:"ur",partOfSeries:{"@type":"TVSeries",name:s.title}});
@@ -151,7 +164,7 @@ ${pic(e.thumb||s.banner||s.poster,t,"hb",1000)}${ad("header")}
 <section class="box"><h2>All Episodes of ${esc(s.title)}</h2><div class="eps">${sib.map(x=>`<a href="${eUrl(x)}" class="${x.id===e.id?"cur":""}">${sib.some(y=>y.season!==x.season)?`S${x.season} `:""}Episode ${pad(x.number)}</a>`).join("")}</div></section>
 <section class="sec"><h2>You May Also Like</h2>${grid(SER.filter(x=>x.id!==s.id).slice(0,6))}</section>${share()}`;
 if(rl){const T0=new Date(e.release_at).getTime(),u=()=>{const d=Math.max(0,Math.floor((T0-Date.now())/1e3));if(!d)return location.reload();const f=(i,v)=>{const x=$(i);if(x)x.textContent=v};f('#cd-d',Math.floor(d/86400));f('#cd-h',Math.floor(d%86400/3600));f('#cd-m',Math.floor(d%3600/60));f('#cd-s',d%60)};u();setInterval(u,1000)}
-try{if(!rl&&!sessionStorage["h"+e.id]){sessionStorage["h"+e.id]=1;sb.rpc("mp_hit_episode",{p:e.id})}}catch(x){}
+try{if(!rl&&!sessionStorage["h"+e.id]){sessionStorage["h"+e.id]=1;sb.rpc("mp_hit_episode",{p:e.id}).then(()=>{},()=>{})}}catch(x){}
 }
 
 function category(){
@@ -179,7 +192,7 @@ dmca:["DMCA",`## Notice\n${n} respects the rights of content owners. If you are 
 privacy:["Privacy Policy",`## Information we collect\n${n} does not ask visitors to create accounts. We may collect basic, non-personal information such as browser type, pages visited and approximate location through analytics tools.\n\n## Cookies and advertising\nThis site may use cookies and third-party advertising services, including Google AdSense. These services may use cookies to show ads based on your visits to this and other websites. You can manage ad personalization in your Google ad settings.\n\n## Third-party links\nOur pages may link to or embed third-party players and download services. We are not responsible for their privacy practices.\n\n## Your consent\nBy using this website you agree to this policy. We may update it from time to time on this page.`],
 terms:["Terms and Conditions",`## Acceptance\nBy using ${n} you agree to these terms.\n\n## Use of the website\nYou may use this website for personal, non-commercial viewing. You agree not to misuse the site, disrupt its operation or attempt to access its admin areas.\n\n## Content and links\nWe do not guarantee that every link will always be available. Links and players may change or be removed without notice.\n\n## Changes\nWe may change these terms at any time. Continued use of the site means you accept the updated terms.`]})[k]}
 function page(){
-const k=qs.get("p")||"about",d=pageText(k);if(!d)return missing();
+const k=qs.get("p")||"about";if(k==="request")return requestPage();const d=pageText(k);if(!d)return missing();
 const t=S["page_"+k]?[d[0],S["page_"+k]]:d;
 seo(`${t[0]}${sfx()}`,plain(t[1],155));
 app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / ${esc(t[0])}</div><section class="box prose"><h1>${esc(t[0])}</h1>${md(t[1])}</section>`;

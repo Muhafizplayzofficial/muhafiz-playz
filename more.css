@@ -1,0 +1,16 @@
+/* more.css: WhatsApp banner, request form helpers, admin charts */
+.wab{display:block;margin:20px 0;text-align:center}
+.wab img{width:100%;border-radius:10px;display:block}
+.wab-d{background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;border-radius:14px;padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.wab-d svg{width:36px;height:36px}
+.wab-d .ur{font:600 1.5rem/2 "Noto Nastaliq Urdu","Noto Naskh Arabic",serif;direction:rtl}
+.wab-d small{font:700 .9rem Outfit,sans-serif;opacity:.95}
+.f{display:grid;gap:12px}
+.f label{display:block;font-size:.85rem;color:var(--mute);margin-bottom:4px}
+.cols{display:flex;align-items:flex-end;gap:4px;height:130px;margin-top:10px}
+.cols div{flex:1;background:var(--grad);border-radius:4px 4px 0 0;position:relative;min-height:4px}
+.cols small{position:absolute;top:-16px;left:0;right:0;text-align:center;font-size:.65rem;color:var(--mute)}
+.bar{display:flex;align-items:center;gap:8px;margin:8px 0}
+.bar span{width:34%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem}
+.bar i{display:block;height:14px;background:var(--grad);border-radius:7px;min-width:4px}
+.bar b{font-size:.85rem;color:var(--gold)}
