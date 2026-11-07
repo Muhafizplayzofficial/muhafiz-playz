@@ -69,10 +69,10 @@ const ld=o=>{const l=document.createElement("script");l.type="application/ld+jso
 const missing=()=>{seo("Page not found"+sfx(),"This page could not be found.");app.innerHTML=`<div class="box"><h1>Page not found</h1><p>Sorry, this page does not exist.</p><a class="btn" href="index.html">Back to home</a></div>`};
 const links=[["about","About Us"],["contact","Contact Us"],["request","Request a Drama"],["disclaimer","Disclaimer"],["dmca","DMCA"],["privacy","Privacy Policy"],["terms","Terms and Conditions"]];
 
-const waBanner=()=>{if(!S.whatsapp_group||S.show_wa==="0")return"";
-if(S.wa_banner)return`<a class="wab" href="${esc(S.whatsapp_group)}" target="_blank" rel="noopener">${pic(S.wa_banner,"Join our WhatsApp channel","",900)}</a>`;
+const waBanner=()=>{const wl=S.wa_banner_link||S.whatsapp_group;if(!wl||S.show_wa==="0")return"";
+if(S.wa_banner)return`<a class="wab" href="${esc(wl)}" target="_blank" rel="noopener">${pic(S.wa_banner,"Join our WhatsApp channel","",900)}</a>`;
 if(!document.getElementById("nq")){const l=document.createElement("link");l.id="nq";l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@600&display=swap";document.head.appendChild(l)}
-return`<a class="wab wab-d" href="${esc(S.whatsapp_group)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg><span class="ur">${esc(S.wa_text_ur||"واٹس ایپ گروپ جوائن کریں")}</span><small>${esc(S.wa_text_en||"Join our WhatsApp Channel")}</small></a>`};
+return`<a class="wab wab-d" href="${esc(wl)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg><span class="ur">${esc(S.wa_text_ur||"واٹس ایپ گروپ جوائن کریں")}</span><small>${esc(S.wa_text_en||"Join our WhatsApp Channel")}</small></a>`};
 function requestPage(){
 seo("Request a Drama"+sfx(),"Tell us which drama you would like to see on "+S.site_name+" Official.");
 app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / Request a Drama</div><section class="box"><h1>Request a Drama</h1><p>Tell us which drama you would like us to add. We read every request.</p><div class="f"><div><label for="rq1">Drama name</label><input id="rq1" maxlength="120" autocomplete="off"></div><div><label for="rq2">Note (optional)</label><textarea id="rq2" rows="3" maxlength="500"></textarea></div><input id="rq0" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true"><button class="btn" id="rqs">Send request</button><p class="msg" id="rqm"></p></div></section>`;
@@ -103,7 +103,7 @@ sg.innerHTML=a.concat(b).join("")};
 $("#sb").onclick=()=>{$("#sf").classList.toggle("on");$("#sf input").focus()};
 if(qs.get("q"))$("#sf").classList.add("on");
 const soc=[["facebook","Facebook"],["telegram","Telegram"],["youtube","YouTube"],["instagram","Instagram"],["twitter","X"],["tiktok","TikTok"]].filter(([k])=>S[k]).map(([k,v])=>`<a href="${esc(S[k])}" target="_blank" rel="noopener">${v}</a>`).join("");
-$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 18</p></footer>`;
+$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 19</p></footer>`;
 }
 const share=()=>{if(!T("show_share"))return"";const u=encodeURIComponent(location.href),t=encodeURIComponent(document.title);return`<div class="share"><a href="https://www.facebook.com/sharer/sharer.php?u=${u}" target="_blank" rel="noopener">Facebook</a><a href="https://twitter.com/intent/tweet?url=${u}&text=${t}" target="_blank" rel="noopener">X</a><a href="https://wa.me/?text=${t}%20${u}" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/share/url?url=${u}&text=${t}" target="_blank" rel="noopener">Telegram</a></div>`};
 
