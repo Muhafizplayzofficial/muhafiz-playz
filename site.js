@@ -82,6 +82,30 @@ let last=0;try{last=+localStorage.getItem("mp_rq")||0}catch(x){}if(Date.now()-la
 $("#rqs").disabled=true;const r=await sb.from("mp_requests").insert({title:t.slice(0,120),note:n?n.slice(0,500):null});
 if(r.error){$("#rqs").disabled=false;return m.textContent="Sorry, your request could not be sent. Please try again later."}
 try{localStorage.setItem("mp_rq",Date.now())}catch(x){}$("#rq1").value="";$("#rq2").value="";m.textContent="Thank you! We received your request.";$("#rqs").disabled=false}}
+let popT=null;
+function joinPopup(){
+if(popT||S.popup_on==="0")return;
+const wa=S.whatsapp_group,tg=S.telegram;if(!wa&&!tg)return;
+const hrs=+S.popup_hours||24;let last=0;try{last=+localStorage.getItem("mp_pop")||0}catch(e){}
+if(Date.now()-last<hrs*36e5)return;
+popT=setTimeout(()=>{
+if(document.getElementById("jp"))return;
+if(!document.getElementById("nq")){const l=document.createElement("link");l.id="nq";l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@600&display=swap";document.head.appendChild(l)}
+const th=(S.telegram||"").match(/t\.me\/([\w_]+)/),h=th?"@"+th[1]:"Telegram";
+const ti=S.popup_title_en||"Never Miss An Episode!",tu=S.popup_title_ur||"کوئی قسط مس نہ کریں!",
+xe=S.popup_text_en||"Follow our Urdu subtitled drama channels on WhatsApp and Telegram for instant episode links, release alerts and HD updates.",
+xu=S.popup_text_ur||"فوری ایپی سوڈ لنکس، ریلیز الرٹس اور ایچ ڈی اپ ڈیٹس کے لیے واٹس ایپ اور ٹیلیگرام چینل فالو کریں۔";
+const row=(c,href,ic,n,sub,su)=>`<a class="jr ${c}" href="${esc(href)}" target="_blank" rel="noopener" data-j="1"><span class="ji">${ic}</span><span class="jt"><b>${n}</b><small>${sub}</small><small class="ur2">${su}</small></span><span class="jb">Join</span></a>`;
+const waI='<svg viewBox="0 0 24 24"><path fill="#fff" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/><path d="M8.500 8.200c-.2 3.800 3.200 7.200 7 7" fill="none" stroke="#1faa59" stroke-width="2.600" stroke-linecap="round"/></svg>';
+const tgI='<svg viewBox="0 0 24 24" fill="#fff"><path d="M21.500 3.200 2.800 10.400c-.8.300-.8 1.200 0 1.400l4.700 1.500 1.800 5.600c.2.600.9.800 1.400.4l2.600-2.200 4.800 3.500c.5.400 1.300.1 1.500-.6L22.900 4.600c.2-.8-.6-1.700-1.400-1.400zM9.400 13l8.500-5.300-6.600 6.200-.3 3.100z"/></svg>';
+const el=document.createElement("div");el.id="jp";el.className="jp";el.setAttribute("role","dialog");el.setAttribute("aria-modal","true");
+el.innerHTML=`<div class="jc"><button class="jx" aria-label="Close" id="jx">×</button><div class="jbadge"><i></i>JOIN OUR COMMUNITY<span class="ur2">ہماری کمیونٹی جوائن کریں</span></div><h2>${esc(ti)}</h2><p class="ur2 jh">${esc(tu)}</p><p class="jd">${esc(xe)}</p><p class="jd ur2">${esc(xu)}</p>${wa?row("jw",wa,waI,"WhatsApp Channel","Instant episode links &amp; alerts","فوری لنکس اور اطلاعات"):""}${tg?row("jg",tg,tgI,"Telegram Channel",esc(h)+" · Instant updates","فوری اپ ڈیٹس"):""}<button class="jk" id="jk">Continue Watching<span class="ur2">دیکھنا جاری رکھیں</span></button></div>`;
+document.body.appendChild(el);document.body.style.overflow="hidden";
+const close=(j)=>{try{localStorage.setItem("mp_pop",Date.now()+(j?6*864e5:0))}catch(e){}el.classList.add("out");document.body.style.overflow="";setTimeout(()=>el.remove(),250);document.removeEventListener("keydown",ek)};
+const ek=e=>{if(e.key==="Escape")close(0)};document.addEventListener("keydown",ek);
+$("#jx").onclick=()=>close(0);$("#jk").onclick=()=>close(0);el.onclick=e=>{if(e.target===el)close(0)};
+$$("[data-j]",el).forEach(a=>a.addEventListener("click",()=>close(1)));$("#jk").focus()
+},(+S.popup_delay||35)*1000)}
 function theme(){const r=document.documentElement.style,m={c_accent:"--gold",c_accent2:"--org",c_bg:"--bg",c_card:"--card",c_text:"--txt"};for(const k in m)if(S[k])r.setProperty(m[k],S[k]);r.setProperty("--grad",`linear-gradient(135deg,${S.c_accent||"#ffd60a"},${S.c_accent2||"#ff7a00"})`);
 if(S.favicon_url){let l=$("link[rel=icon]");if(l)l.href=S.favicon_url}}
 function chrome(){
@@ -103,7 +127,7 @@ sg.innerHTML=a.concat(b).join("")};
 $("#sb").onclick=()=>{$("#sf").classList.toggle("on");$("#sf input").focus()};
 if(qs.get("q"))$("#sf").classList.add("on");
 const soc=[["facebook","Facebook"],["telegram","Telegram"],["youtube","YouTube"],["instagram","Instagram"],["twitter","X"],["tiktok","TikTok"]].filter(([k])=>S[k]).map(([k,v])=>`<a href="${esc(S[k])}" target="_blank" rel="noopener">${v}</a>`).join("");
-$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 19</p></footer>`;
+$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 20</p></footer>`;
 }
 const share=()=>{if(!T("show_share"))return"";const u=encodeURIComponent(location.href),t=encodeURIComponent(document.title);return`<div class="share"><a href="https://www.facebook.com/sharer/sharer.php?u=${u}" target="_blank" rel="noopener">Facebook</a><a href="https://twitter.com/intent/tweet?url=${u}&text=${t}" target="_blank" rel="noopener">X</a><a href="https://wa.me/?text=${t}%20${u}" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/share/url?url=${u}&text=${t}" target="_blank" rel="noopener">Telegram</a></div>`};
 
@@ -208,7 +232,7 @@ if(!ok)throw err}
 };
 const render=()=>{$$("script[type='application/ld+json']").forEach(x=>x.remove());S.site_name=String(S.site_name||"").replace(/\s*official\s*$/i,"").trim()||"Muhafiz Playz";theme();chrome();if(S.noindex==="1")meta("robots","noindex,nofollow");
 if(S.maintenance==="1"){app.innerHTML=`<div class="mm"><h1>${esc(S.site_name)} Official</h1><p>${esc(S.maintenance_msg||"We are performing maintenance. Please check back soon.")}</p></div>`;return}
-({home,series,watch,category,search,page}[P]||missing)();
+({home,series,watch,category,search,page}[P]||missing)();if(P==="watch"||P==="series")joinPopup();
 $$(".adraw").forEach(x=>x.append(frag(S["ad_html_"+x.dataset.r])));
 if(S.adsense_client)$$(".adsbygoogle").forEach(()=>{try{(window.adsbygoogle=window.adsbygoogle||[]).push({})}catch(e){}});
 };
