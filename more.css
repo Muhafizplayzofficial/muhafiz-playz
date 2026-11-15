@@ -46,3 +46,28 @@
 @keyframes jout{to{opacity:0}}
 @keyframes jpop{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.jp,.jc,.jp.out{animation:none}}
+/* compact popup */
+.jp{padding:14px}
+.jc{width:min(340px,100%);padding:18px 14px 10px;border-radius:20px;max-height:86vh;overflow:auto}
+.jbadge{font-size:.62rem;padding:5px 12px;margin-top:2px}
+.jc h2{font-size:1.2rem;margin:10px 0 0}
+.jh{font-size:1rem;margin:0 0 4px;line-height:1.8}
+.jd{font-size:.8rem;line-height:1.45;margin:2px 2px 0}
+.ur2{line-height:1.8}
+.jr{margin-top:10px;padding:9px;gap:10px;border-radius:14px}
+.ji{width:40px;height:40px;border-radius:11px}
+.ji svg{width:23px;height:23px}
+.jt b{font-size:.95rem}
+.jt small{font-size:.72rem}
+.jt small.ur2{display:none}
+.jb{padding:8px 16px;font-size:.88rem}
+.jk{margin-top:8px;padding:8px;font-size:.95rem}
+.jk .ur2{font-size:.8rem;line-height:1.7}
+.jx{width:32px;height:32px;font-size:1.3rem;top:6px;right:8px}
+/* smaller on phones */
+.jc{width:min(300px,calc(100% - 20px));padding:16px 12px 8px}
+.jc h2{font-size:1.1rem}
+.jd{font-size:.76rem}
+.jr{padding:8px;margin-top:8px}
+.jt b{font-size:.9rem}
+.jb{padding:7px 14px;font-size:.84rem}

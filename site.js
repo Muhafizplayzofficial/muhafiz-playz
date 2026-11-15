@@ -86,8 +86,8 @@ let popT=null;
 function joinPopup(){
 if(popT||S.popup_on==="0")return;
 const wa=S.whatsapp_group,tg=S.telegram;if(!wa&&!tg)return;
-const hrs=+S.popup_hours||24;let last=0;try{last=+localStorage.getItem("mp_pop")||0}catch(e){}
-if(Date.now()-last<hrs*36e5)return;
+const hrs=+S.popup_hours||0;let last=0;try{last=+localStorage.getItem("mp_pop")||0}catch(e){}
+if(hrs&&Date.now()-last<hrs*36e5)return;
 popT=setTimeout(()=>{
 if(document.getElementById("jp"))return;
 if(!document.getElementById("nq")){const l=document.createElement("link");l.id="nq";l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@600&display=swap";document.head.appendChild(l)}
@@ -101,7 +101,7 @@ const tgI='<svg viewBox="0 0 24 24" fill="#fff"><path d="M21.500 3.200 2.800 10.
 const el=document.createElement("div");el.id="jp";el.className="jp";el.setAttribute("role","dialog");el.setAttribute("aria-modal","true");
 el.innerHTML=`<div class="jc"><button class="jx" aria-label="Close" id="jx">×</button><div class="jbadge"><i></i>JOIN OUR COMMUNITY<span class="ur2">ہماری کمیونٹی جوائن کریں</span></div><h2>${esc(ti)}</h2><p class="ur2 jh">${esc(tu)}</p><p class="jd">${esc(xe)}</p><p class="jd ur2">${esc(xu)}</p>${wa?row("jw",wa,waI,"WhatsApp Channel","Instant episode links &amp; alerts","فوری لنکس اور اطلاعات"):""}${tg?row("jg",tg,tgI,"Telegram Channel",esc(h)+" · Instant updates","فوری اپ ڈیٹس"):""}<button class="jk" id="jk">Continue Watching<span class="ur2">دیکھنا جاری رکھیں</span></button></div>`;
 document.body.appendChild(el);document.body.style.overflow="hidden";
-const close=(j)=>{try{localStorage.setItem("mp_pop",Date.now()+(j?6*864e5:0))}catch(e){}el.classList.add("out");document.body.style.overflow="";setTimeout(()=>el.remove(),250);document.removeEventListener("keydown",ek)};
+const close=(j)=>{if(hrs){try{localStorage.setItem("mp_pop",Date.now()+(j?6*864e5:0))}catch(e){}}el.classList.add("out");document.body.style.overflow="";setTimeout(()=>el.remove(),250);document.removeEventListener("keydown",ek)};
 const ek=e=>{if(e.key==="Escape")close(0)};document.addEventListener("keydown",ek);
 $("#jx").onclick=()=>close(0);$("#jk").onclick=()=>close(0);el.onclick=e=>{if(e.target===el)close(0)};
 $$("[data-j]",el).forEach(a=>a.addEventListener("click",()=>close(1)));$("#jk").focus()
@@ -127,7 +127,7 @@ sg.innerHTML=a.concat(b).join("")};
 $("#sb").onclick=()=>{$("#sf").classList.toggle("on");$("#sf input").focus()};
 if(qs.get("q"))$("#sf").classList.add("on");
 const soc=[["facebook","Facebook"],["telegram","Telegram"],["youtube","YouTube"],["instagram","Instagram"],["twitter","X"],["tiktok","TikTok"]].filter(([k])=>S[k]).map(([k,v])=>`<a href="${esc(S[k])}" target="_blank" rel="noopener">${v}</a>`).join("");
-$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 20</p></footer>`;
+$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 21</p></footer>`;
 }
 const share=()=>{if(!T("show_share"))return"";const u=encodeURIComponent(location.href),t=encodeURIComponent(document.title);return`<div class="share"><a href="https://www.facebook.com/sharer/sharer.php?u=${u}" target="_blank" rel="noopener">Facebook</a><a href="https://twitter.com/intent/tweet?url=${u}&text=${t}" target="_blank" rel="noopener">X</a><a href="https://wa.me/?text=${t}%20${u}" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/share/url?url=${u}&text=${t}" target="_blank" rel="noopener">Telegram</a></div>`};
 
