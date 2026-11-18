@@ -9,6 +9,7 @@ window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();window.__ip
 const norm=s=>String(s||"").toLowerCase().replace(/ı/g,"i").normalize("NFD").replace(/[\u0300-\u036f]/g,"");
 const app=$("#app"),qs=new URLSearchParams(location.search),P=document.body.dataset.page;
 if(document.body.dataset.s)qs.set("s",document.body.dataset.s);if(document.body.dataset.id)qs.set("id",document.body.dataset.id);
+document.body.classList.add("fx");
 if(!C.SUPABASE_URL||C.SUPABASE_URL.includes("PASTE")){app.innerHTML='<div class="box"><h2>Setup incomplete</h2><p>Paste your Supabase URL and key into config.js.</p></div>';return}
 const sb=supabase.createClient(C.SUPABASE_URL,C.SUPABASE_KEY);
 const D={site_name:"Muhafiz Playz",tagline:"Urdu Subtitled Dramas, Series and Movies",home_title:"Watch the Latest Dramas with Urdu Subtitles",
@@ -106,6 +107,13 @@ const ek=e=>{if(e.key==="Escape")close(0)};document.addEventListener("keydown",e
 $("#jx").onclick=()=>close(0);$("#jk").onclick=()=>close(0);el.onclick=e=>{if(e.target===el)close(0)};
 $$("[data-j]",el).forEach(a=>a.addEventListener("click",()=>close(1)));$("#jk").focus()
 },(+S.popup_delay||35)*1000)}
+function fx(){
+if(!$("#sp")){const p=document.createElement("div");p.id="sp";document.body.appendChild(p);const b=document.createElement("button");b.id="bt";b.setAttribute("aria-label","Back to top");b.innerHTML="&#8593;";b.onclick=()=>scrollTo({top:0,behavior:"smooth"});document.body.appendChild(b);
+addEventListener("scroll",()=>{const h=document.documentElement,t=h.scrollTop,m=h.scrollHeight-h.clientHeight;p.style.width=(m>0?t/m*100:0)+"%";b.classList.toggle("on",t>700)},{passive:true})}
+if(!("IntersectionObserver" in window)||matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}}),{rootMargin:"0px 0px -5% 0px",threshold:.04});
+$$("#app .box,#app .sec>h2,#app .rc,#app .pc,#app .dc,#app .inner,#app .crumb,#app .meta,#app details,#app .vote,#app .nav,#app article").forEach((el,i)=>{el.classList.add("rv");el.style.animationDelay=(i%5)*55+"ms";io.observe(el)});
+setTimeout(()=>$$(".rv:not(.in)").forEach(e=>e.classList.add("in")),2500)}
 function theme(){const r=document.documentElement.style,m={c_accent:"--gold",c_accent2:"--org",c_bg:"--bg",c_card:"--card",c_text:"--txt"};for(const k in m)if(S[k])r.setProperty(m[k],S[k]);r.setProperty("--grad",`linear-gradient(135deg,${S.c_accent||"#ffd60a"},${S.c_accent2||"#ff7a00"})`);
 if(S.favicon_url){let l=$("link[rel=icon]");if(l)l.href=S.favicon_url}}
 function chrome(){
@@ -127,7 +135,7 @@ sg.innerHTML=a.concat(b).join("")};
 $("#sb").onclick=()=>{$("#sf").classList.toggle("on");$("#sf input").focus()};
 if(qs.get("q"))$("#sf").classList.add("on");
 const soc=[["facebook","Facebook"],["telegram","Telegram"],["youtube","YouTube"],["instagram","Instagram"],["twitter","X"],["tiktok","TikTok"]].filter(([k])=>S[k]).map(([k,v])=>`<a href="${esc(S[k])}" target="_blank" rel="noopener">${v}</a>`).join("");
-$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 21</p></footer>`;
+$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 22</p></footer>`;
 }
 const share=()=>{if(!T("show_share"))return"";const u=encodeURIComponent(location.href),t=encodeURIComponent(document.title);return`<div class="share"><a href="https://www.facebook.com/sharer/sharer.php?u=${u}" target="_blank" rel="noopener">Facebook</a><a href="https://twitter.com/intent/tweet?url=${u}&text=${t}" target="_blank" rel="noopener">X</a><a href="https://wa.me/?text=${t}%20${u}" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/share/url?url=${u}&text=${t}" target="_blank" rel="noopener">Telegram</a></div>`};
 
@@ -232,7 +240,7 @@ if(!ok)throw err}
 };
 const render=()=>{$$("script[type='application/ld+json']").forEach(x=>x.remove());S.site_name=String(S.site_name||"").replace(/\s*official\s*$/i,"").trim()||"Muhafiz Playz";theme();chrome();if(S.noindex==="1")meta("robots","noindex,nofollow");
 if(S.maintenance==="1"){app.innerHTML=`<div class="mm"><h1>${esc(S.site_name)} Official</h1><p>${esc(S.maintenance_msg||"We are performing maintenance. Please check back soon.")}</p></div>`;return}
-({home,series,watch,category,search,page}[P]||missing)();if(P==="watch"||P==="series")joinPopup();
+({home,series,watch,category,search,page}[P]||missing)();if(P==="watch"||P==="series")joinPopup();fx();
 $$(".adraw").forEach(x=>x.append(frag(S["ad_html_"+x.dataset.r])));
 if(S.adsense_client)$$(".adsbygoogle").forEach(()=>{try{(window.adsbygoogle=window.adsbygoogle||[]).push({})}catch(e){}});
 };
