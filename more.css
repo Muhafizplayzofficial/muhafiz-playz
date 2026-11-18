@@ -120,3 +120,44 @@ html{scroll-behavior:smooth}
 .lt .fx .sug{background:rgba(255,255,255,.92)}
 .fx footer{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.4))}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.fx::before,.fx #app,.fx .rv.in,.fx img.pic,.fx .eps small{animation:none}.fx .rv{opacity:1}}
+
+/* v23 premium glass polish */
+html{scrollbar-width:thin;scrollbar-color:rgba(255,122,0,.8) transparent}
+::selection{background:rgba(255,196,0,.35);color:#fff}
+.fx a,.fx button{-webkit-tap-highlight-color:transparent}
+.fx{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.fx::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(120% 70% at 50% -12%,rgba(255,255,255,.06),transparent 60%)}
+/* floating glass header that stays on top */
+.fx #hdr{display:contents}
+.fx .hd{top:8px;margin:8px 10px 0;border-radius:20px;border:1px solid rgba(255,255,255,.14);border-bottom-color:rgba(255,160,40,.45);background:rgba(18,15,24,.62);-webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);transition:background .3s,box-shadow .3s,border-color .3s}
+.fx .hd.sc{background:rgba(14,11,20,.82);box-shadow:0 14px 40px rgba(0,0,0,.5),0 0 0 1px rgba(255,160,40,.2)}
+.lt .fx .hd{background:rgba(255,255,255,.72);border-color:rgba(0,0,0,.08)}
+.lt .fx .hd.sc{background:rgba(255,255,255,.9)}
+.fx .ann{margin:8px 10px 0;border-radius:14px}
+/* liquid glass cards with a light edge */
+.fx .box,.fx .art,.fx .rc,.fx details{border:1px solid transparent;background:linear-gradient(160deg,rgba(255,255,255,.085),rgba(255,255,255,.02)) padding-box,linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(150deg,rgba(255,255,255,.3),rgba(255,255,255,.05) 38%,rgba(255,196,0,.24)) border-box;box-shadow:0 14px 38px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.08)}
+.fx .inner{border:1px solid transparent;background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.015)) padding-box,linear-gradient(var(--card2),var(--card2)) padding-box,linear-gradient(150deg,rgba(255,255,255,.22),rgba(255,255,255,.04) 40%,rgba(255,196,0,.2)) border-box}
+.lt .fx .box,.lt .fx .art,.lt .fx .rc,.lt .fx details{background:linear-gradient(#fff,#fff) padding-box,linear-gradient(150deg,rgba(0,0,0,.12),rgba(0,0,0,.03)) border-box}
+.lt .fx .inner{background:linear-gradient(#f5f0e8,#f5f0e8) padding-box,linear-gradient(150deg,rgba(0,0,0,.1),rgba(0,0,0,.03)) border-box}
+/* glossy buttons */
+.fx .btn{background:linear-gradient(180deg,#ffe066,#ffb000 45%,#ff7a00);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 0 rgba(0,0,0,.12),0 10px 26px rgba(255,122,0,.35);letter-spacing:.2px}
+.fx .btn.o{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,160,40,.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 6px 20px rgba(0,0,0,.25);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.fx .btn.wa{background:linear-gradient(180deg,#3ee27f,#1faa59);color:#fff}
+.fx .eps a{position:relative;overflow:hidden;border-radius:14px;background:linear-gradient(160deg,rgba(255,140,20,.2),rgba(255,140,20,.05)),var(--card2);border:1.5px solid rgba(255,140,20,.75);box-shadow:inset 0 1px 0 rgba(255,255,255,.1)}
+.fx .tab{border-radius:12px;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.fx .tab:active{transform:scale(.95)}
+.rip{position:absolute;border-radius:50%;background:rgba(255,255,255,.45);transform:scale(0);animation:rp .6s ease-out;pointer-events:none}
+@keyframes rp{to{transform:scale(1);opacity:0}}
+/* posters and banners */
+.fx .pc .pic,.fx .dc .pic{border:1px solid rgba(255,255,255,.14);box-shadow:0 12px 30px rgba(0,0,0,.4)}
+.fx .pc h3{transition:color .25s}
+@media(hover:hover){.fx .pc:hover h3{color:var(--gold)}.fx .cats a{transition:padding .25s,color .25s}.fx .cats a:hover{padding-left:10px}}
+/* floating share bar */
+.fx .share{left:10px;right:10px;bottom:10px;border-radius:18px;overflow:hidden;box-shadow:0 14px 36px rgba(0,0,0,.5)}
+#bt{bottom:84px;z-index:24}
+/* smooth page change */
+.fx #app{transition:opacity .18s ease}
+.fx.leave #app{opacity:0}
+.fx .dr .cats a{border-radius:10px}
+.fx footer{border-top:1px solid rgba(255,160,40,.35)}
+@media(prefers-reduced-motion:reduce){.rip,.fx .tab{animation:none;transition:none}}

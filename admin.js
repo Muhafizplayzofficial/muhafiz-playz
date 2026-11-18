@@ -85,7 +85,7 @@ if(ty==="ed")return`<div><label>${l}</label><div class="tb">${TB[tab].map((b,i)=
 if(ty==="area")return`<div><label>${l}</label><textarea data-k="${k}" rows="${x||4}">${esc(v)}</textarea></div>`;
 if(ty==="dt")return`<div><label>${l}</label><input type="datetime-local" data-k="${k}" value="${loc(v)}"></div>`;
 if(ty==="chk")return`<label><input type="checkbox" data-k="${k}" ${v?"checked":""}> ${l}</label>`;
-if(ty==="cat")return`<div><label>${l}</label><input data-k="${k}" list="cl" value="${esc(v)}"><datalist id="cl">${CATS.map(c=>`<option value="${esc(c.name)}">`).join("")}</datalist></div>`;
+if(ty==="cat"){const nm=[...new Set([...CATS.map(c=>c.name),...SER.map(s=>s.category).filter(Boolean)])];return`<div><label>${l}</label><select data-k="${k}" id="cs"><option value="">(none)</option>${nm.map(n=>`<option value="${esc(n)}" ${n===v?"selected":""}>${esc(n)}</option>`).join("")}<option value="__new__">+ Add a new category...</option></select><input id="nc" placeholder="New category name" style="display:none;margin-top:8px"></div>`}
 if(ty==="ser")return`<div><label>${l}</label><select data-k="${k}">${SER.map(s=>`<option value="${s.id}" ${s.id==v?"selected":""}>${esc(s.title)}</option>`).join("")}</select></div>`;
 if(ty==="img")return`<div><label>${l}</label><div class="row"><input data-k="${k}" value="${esc(v)}" placeholder="https://..."><input type="file" accept="image/*" data-up="${k}" style="max-width:150px"></div></div>`;
 return`<div><label>${l}${lbl(k)?` (${esc(lbl(k))})`:""}</label><input data-k="${k}" ${ty==="num"?'type="number"':""} value="${esc(v)}"></div>`};
@@ -96,6 +96,7 @@ $("#lst").innerHTML=data.filter(r=>sp.n(r).toLowerCase().includes(q)&&(!fs||r.se
 $$("[data-e]").forEach(b=>b.onclick=()=>go(tab,+b.dataset.e));
 $$("[data-d]").forEach(b=>b.onclick=async()=>{if(!confirm("Delete this item? This cannot be undone."))return;const{error}=await sb.from(sp.t).delete().eq("id",+b.dataset.d);if(error)return alert(error.message);await refs();sel=null;draw("Deleted.")})};
 if(tab==="episodes"&&!row){const ss=$("[data-k=series_id]"),fill=()=>{const l=data.filter(r=>r.series_id==+ss.value).sort((p,q)=>(p.season-q.season)||(p.number-q.number)),la=l[l.length-1];if(la){$("[data-k=season]").value=la.season;$("[data-k=number]").value=la.number+1}};ss.onchange=fill;if(!d.number)fill()}
+const cs=$("#cs");if(cs)cs.onchange=()=>{$("#nc").style.display=cs.value==="__new__"?"block":"none"};
 list();$("#flt").oninput=list;if($("#fs"))$("#fs").onchange=list;
 $$("[data-tb]").forEach(b=>b.onclick=()=>{const ta=$(`[data-k=${b.dataset.for}]`),t=TB[tab][+b.dataset.tb];
 if(t[1]==="L"){const u=prompt("Link (https://...)");if(u)ins(ta,"[","]("+u+")","link text")}else if(t[1]==="I"){const u=prompt("Photo link (https://...)");if(u)ins(ta,"\n![","]("+u+")\n","photo")}else if(t[1]==="S"){const n=prompt("Season number");if(n)ins(ta,`\n[season ${parseInt(n)||1}]\n`,"","")}else ins(ta,t[1],t[2],t[3])});
@@ -103,7 +104,7 @@ $$("[data-pv]").forEach(b=>b.onclick=()=>{const p=$("#pv-"+b.dataset.pv);p.hidde
 $$("[data-up]").forEach(i=>i.onchange=async()=>{const f=i.files[0];if(!f)return;const n=Date.now()+"-"+slug(f.name.replace(/\.[^.]+$/,""))+"."+(f.name.split(".").pop()||"jpg").toLowerCase();
 const big=/thumb|banner/.test(i.dataset.up)?1280:600;const blob=await shrink(f,big);const n2=n.replace(/\.[^.]+$/,".webp");const{error}=await sb.storage.from("posters").upload(n2,blob,{contentType:"image/webp",cacheControl:"31536000"});if(error)return alert(error.message);$(`[data-k=${i.dataset.up}]`).value=sb.storage.from("posters").getPublicUrl(n2).data.publicUrl});
 $("#sv").onclick=async()=>{const o={};for(const el of $$("[data-k]")){const k=el.dataset.k,ty=sp.f.find(f=>f[0]===k)[2];o[k]=ty==="chk"?el.checked:ty==="dt"?(el.value?new Date(el.value).toISOString():null):ty==="num"||ty==="ser"?(el.value===""?null:Number(el.value)):(el.value.trim()||null)}
-if(tab==="series"){if(!o.title)return alert("Please enter the drama name.");o.slug=slug(o.slug||o.title);if(o.category&&!CATS.some(c=>c.name===o.category))await sb.from("mp_categories").insert({name:o.category,sort:CATS.length+1})}
+if(tab==="series"){if(!o.title)return alert("Please enter the drama name.");o.slug=slug(o.slug||o.title);if(o.category==="__new__")o.category=$("#nc").value.trim()||null;if(o.category&&!CATS.some(c=>c.name===o.category))await sb.from("mp_categories").insert({name:o.category,sort:CATS.length+1})}
 if(tab==="episodes"&&(!o.series_id||o.number==null))return alert("Drama and episode number are required.");
 if(tab==="categories"&&!o.name)return alert("Please enter the category name.");
 const{error}=row?await sb.from(sp.t).update(o).eq("id",row.id):await sb.from(sp.t).insert(o);
