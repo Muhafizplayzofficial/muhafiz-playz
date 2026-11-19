@@ -131,14 +131,18 @@ document.onkeydown=e=>{if(e.key==="Escape")tg(false)};
 $("#tm").onclick=()=>{const l=document.documentElement.classList.toggle("lt");try{localStorage.setItem("mp_theme",l?"light":"dark")}catch(e){}};
 $("#a2hs").onclick=e=>{e.preventDefault();if(window.__ip){window.__ip.prompt()}else alert("To install: open the browser menu (three dots) and tap Add to Home Screen. On iPhone: tap Share, then Add to Home Screen.")};
 const si=$("#sf input"),sg=$("#sug");
-si.oninput=()=>{const q=norm(si.value.trim());if(q.length<2){sg.innerHTML="";return}
-const a=SER.filter(x=>norm(x.title+" "+(x.category||"")+" "+(x.tags||"")).includes(q)).slice(0,5).map(x=>`<a href="${sUrl(x)}">${esc(x.title)}</a>`);
-const b=EPS.filter(e=>{const x=sOf(e.series_id);return x&&norm(eTitle(e,x)).includes(q)}).slice(0,3).map(e=>`<a href="${eUrl(e)}">${esc(eTitle(e,sOf(e.series_id)))}</a>`);
-sg.innerHTML=a.concat(b).join("")};
+si.oninput=()=>{const raw=si.value.trim(),q=norm(raw);if(!q){sg.innerHTML="";sg.classList.remove("on");return}
+const th=(u,w)=>u?`<img src="${esc(px(u,w))}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">`:`<span class="no"></span>`;
+const a=SER.filter(x=>norm(x.title+" "+(x.category||"")+" "+(x.tags||"")).includes(q)).slice(0,5).map(x=>`<a href="${sUrl(x)}">${th(x.poster||x.banner,96)}<span><b>${esc(x.title)}</b><small>${esc(x.category||"Drama")} · ${eOf(x.id).length} episodes</small></span></a>`);
+const b=EPS.filter(e=>{const x=sOf(e.series_id);return x&&norm(eTitle(e,x)).includes(q)}).slice(0,4).map(e=>{const x=sOf(e.series_id);return`<a href="${eUrl(e)}" class="ep">${th(e.thumb||x.banner||x.poster,120)}<span><b>${esc(eTitle(e,x))}</b><small>Episode</small></span></a>`});
+const all=a.concat(b);
+sg.innerHTML=all.length?all.join("")+`<a class="all" href="search.html?q=${encodeURIComponent(raw)}">See all results for “${esc(raw)}”</a>`:`<p class="nr">No matching dramas yet.</p>`;
+sg.classList.add("on");$$("a",sg).forEach((el,i)=>{el.style.animationDelay=i*45+"ms"})};
+si.onfocus=()=>{if(sg.innerHTML)sg.classList.add("on")};si.onblur=()=>setTimeout(()=>sg.classList.remove("on"),200);
 $("#sb").onclick=()=>{$("#sf").classList.toggle("on");$("#sf input").focus()};
 if(qs.get("q"))$("#sf").classList.add("on");
 const soc=[["facebook","Facebook"],["telegram","Telegram"],["youtube","YouTube"],["instagram","Instagram"],["twitter","X"],["tiktok","TikTok"]].filter(([k])=>S[k]).map(([k,v])=>`<a href="${esc(S[k])}" target="_blank" rel="noopener">${v}</a>`).join("");
-$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 23</p></footer>`;
+$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 24</p></footer>`;
 }
 const share=()=>{if(!T("show_share"))return"";const u=encodeURIComponent(location.href),t=encodeURIComponent(document.title);return`<div class="share"><a href="https://www.facebook.com/sharer/sharer.php?u=${u}" target="_blank" rel="noopener">Facebook</a><a href="https://twitter.com/intent/tweet?url=${u}&text=${t}" target="_blank" rel="noopener">X</a><a href="https://wa.me/?text=${t}%20${u}" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/share/url?url=${u}&text=${t}" target="_blank" rel="noopener">Telegram</a></div>`};
 
