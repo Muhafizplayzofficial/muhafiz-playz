@@ -118,9 +118,9 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.targ
 $$("#app .box,#app .sec>h2,#app .rc,#app .pc,#app .dc,#app .inner,#app .crumb,#app .meta,#app details,#app .vote,#app .nav,#app article").forEach((el,i)=>{el.classList.add("rv");el.style.animationDelay=(i%5)*55+"ms";io.observe(el)});
 setTimeout(()=>$$(".rv:not(.in)").forEach(e=>e.classList.add("in")),2500)}
 function theme(){const r=document.documentElement.style,m={c_accent:"--gold",c_accent2:"--org",c_bg:"--bg",c_card:"--card",c_text:"--txt"};for(const k in m)if(S[k])r.setProperty(m[k],S[k]);r.setProperty("--grad",`linear-gradient(135deg,${S.c_accent||"#ffd60a"},${S.c_accent2||"#ff7a00"})`);
-if(S.favicon_url){let l=$("link[rel=icon]");if(l)l.href=S.favicon_url}}
+if(/^https?:\/\//.test(S.favicon_url||"")){let l=$("link[rel=icon]");if(l)l.href=S.favicon_url}}
 function chrome(){
-const lg=esc(S.logo_url||"logo.png");
+const lg=esc(/^https?:\/\//.test(S.logo_url||"")?S.logo_url:"logo.png");
 $("#hdr").innerHTML=(S.announcement?`<div class="ann">${esc(S.announcement)}</div>`:"")+`<div class="hd"><button id="mb" aria-label="Menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button><a class="brand" href="index.html" aria-label="${esc(S.site_name)} Official home"><span class="bt"><b>${esc(S.site_name.toUpperCase())}</b><i>OFFICIAL</i></span><img src="${lg}" alt="${esc(S.site_name)} logo" width="44" height="44" onerror="this.onerror=null;this.src='logo.png'"></a><div class="hr"><button id="tm" aria-label="Switch light or dark mode"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></button><button id="sb" aria-label="Search"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button></div></div><form id="sf" class="sf" action="search.html"><input name="q" placeholder="Search dramas or episodes" aria-label="Search" value="${esc(qs.get("q")||"")}"><div id="sug" class="sug"></div></form>
 <div class="dim" id="dim"></div><aside class="dr" id="dr"><button class="dcl" id="dc" aria-label="Close menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button><a class="brand" href="index.html"><img src="${lg}" alt="" width="44" height="44" onerror="this.onerror=null;this.src='logo.png'"><span class="bt" style="align-items:flex-start"><b>${esc(S.site_name.toUpperCase())}</b><i>OFFICIAL</i></span></a>
 <h3>Menu</h3><div class="cats"><a href="index.html">Home</a><a href="category.html?c=all">All Series</a><a href="#" id="a2hs">Add to Home Screen</a></div><h3>Categories</h3><div class="cats">${catList().map(([n,c])=>`<a href="${cUrl(n)}">${esc(n)}<b>${c}</b></a>`).join("")||'<p class="muted">No categories yet.</p>'}</div>
@@ -142,7 +142,7 @@ si.onfocus=()=>{if(sg.innerHTML)sg.classList.add("on")};si.onblur=()=>setTimeout
 $("#sb").onclick=()=>{$("#sf").classList.toggle("on");$("#sf input").focus()};
 if(qs.get("q"))$("#sf").classList.add("on");
 const soc=[["facebook","Facebook"],["telegram","Telegram"],["youtube","YouTube"],["instagram","Instagram"],["twitter","X"],["tiktok","TikTok"]].filter(([k])=>S[k]).map(([k,v])=>`<a href="${esc(S[k])}" target="_blank" rel="noopener">${v}</a>`).join("");
-$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 24</p></footer>`;
+$("#ftr").innerHTML=`<footer>${soc?`<p>${soc}</p>`:""}<p>${links.map(([k,v])=>`<a href="page.html?p=${k}">${v}</a>`).join("")}</p>${S.footer_text?`<p>${esc(S.footer_text)}</p>`:""}<p>© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p style="font-size:.7rem;opacity:.5">Build 27</p></footer>`;
 }
 const share=()=>{if(!T("show_share"))return"";const u=encodeURIComponent(location.href),t=encodeURIComponent(document.title);return`<div class="share"><a href="https://www.facebook.com/sharer/sharer.php?u=${u}" target="_blank" rel="noopener">Facebook</a><a href="https://twitter.com/intent/tweet?url=${u}&text=${t}" target="_blank" rel="noopener">X</a><a href="https://wa.me/?text=${t}%20${u}" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/share/url?url=${u}&text=${t}" target="_blank" rel="noopener">Telegram</a></div>`};
 
@@ -159,8 +159,8 @@ app.innerHTML=ad("header")+`<div class="${side?"two":""}"><div>${main}</div>${si
 ld(faqLd(D.faq));
 }
 
-function series(){
-const s=SER.find(x=>x.slug===qs.get("s"));if(!s)return missing();
+async function series(){
+const s=SER.find(x=>x.slug===qs.get("s"));if(!s)return missing();await fullSeries(s);
 const eps=eOf(s.id),seas=[...new Set(eps.map(e=>e.season))];
 let txt=s.description||`Watch all episodes of ${s.title} with Urdu subtitles.`;
 if(!/^[ \t]*\[(episodes|season\s*\d+)\][ \t]*$/mi.test(txt))txt=withMarker(txt,"episodes");
@@ -179,8 +179,8 @@ ${rel.length?`<section class="sec"><h2>More ${esc(s.category)}</h2>${grid(rel)}<
 ld(faqLd(qa));
 }
 
-function watch(){
-const e=EPS.find(x=>x.id===+qs.get("id")),s=e&&sOf(e.series_id);if(!e||!s)return missing();
+async function watch(){
+const e=EPS.find(x=>x.id===+qs.get("id")),s=e&&sOf(e.series_id);if(!e||!s)return missing();await fullEp(e);await fullSeries(s);
 const sib=eOf(s.id),i=sib.findIndex(x=>x.id===e.id),pv=sib[i-1],nx=sib[i+1],t=eTitle(e,s);
 const srv=[1,2,3,4].map(n=>({l:S["server"+n+"_label"]||"Server "+n,u:e["server"+n]})).filter(x=>x.u);
 const auto=`Watch ${t} online with Urdu subtitles on ${S.site_name} Official. Choose a server to play the episode on this page, and use the download buttons when they are available.\n\n${intro(s)}`;
@@ -203,7 +203,6 @@ ${pic(e.thumb||s.banner||s.poster,t,"hb",1000)}${ad("header")}
 <section class="box"><h2>All Episodes of ${esc(s.title)}</h2><div class="eps">${sib.map(x=>`<a href="${eUrl(x)}" class="${x.id===e.id?"cur":""}">${sib.some(y=>y.season!==x.season)?`S${x.season} `:""}Episode ${pad(x.number)}</a>`).join("")}</div></section>
 <section class="sec"><h2>You May Also Like</h2>${grid(SER.filter(x=>x.id!==s.id).slice(0,6))}</section>${share()}`;
 if(rl){const T0=new Date(e.release_at).getTime(),u=()=>{const d=Math.max(0,Math.floor((T0-Date.now())/1e3));if(!d)return location.reload();const f=(i,v)=>{const x=$(i);if(x)x.textContent=v};f('#cd-d',Math.floor(d/86400));f('#cd-h',Math.floor(d%86400/3600));f('#cd-m',Math.floor(d%3600/60));f('#cd-s',d%60)};u();setInterval(u,1000)}
-try{if(!rl&&!sessionStorage["h"+e.id]){sessionStorage["h"+e.id]=1;sb.rpc("mp_hit_episode",{p:e.id}).then(()=>{},()=>{})}}catch(x){}
 }
 
 function category(){
@@ -237,17 +236,21 @@ seo(`${t[0]}${sfx()}`,plain(t[1],155));
 app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / ${esc(t[0])}</div><section class="box prose"><h1>${esc(t[0])}</h1>${md(t[1])}</section>`;
 }
 
+const SC="id,title,slug,category,year,status,poster,banner,featured,published,popular,meta_title,meta_desc,tags,trailer,created_at",EC="id,series_id,season,number,title,thumb,release_at,created_at,published",DESC={},FULL={};
+async function fullSeries(s){if(s.description===undefined){if(DESC[s.id]===undefined){try{const r=await sb.from("mp_series").select("description").eq("id",s.id).maybeSingle();DESC[s.id]=(r.data&&r.data.description)||""}catch(x){DESC[s.id]=""}}s.description=DESC[s.id]}return s}
+async function fullEp(e){if(!e._f){let d=FULL[e.id];if(!d){try{const r=await sb.from("mp_episodes").select("*").eq("id",e.id).maybeSingle();d=FULL[e.id]=r.data||{}}catch(x){d=FULL[e.id]={}}}Object.assign(e,d);e._f=1}return e}
 const loadData=async()=>{
 try{
-const [a,b,c,d]=await Promise.all([sb.from("mp_series").select("*").eq("published",true).order("created_at",{ascending:false}),sb.from("mp_episodes").select("*").eq("published",true).order("created_at",{ascending:false}),sb.from("mp_categories").select("*").order("sort"),sb.from("mp_settings").select("*")]);
-const er=[a,b,c,d].find(x=>x.error);if(er)throw er.error;
-SER=a.data;EPS=b.data;CATS=c.data;d.data.forEach(r=>{if(r.value!=="")S[r.key]=r.value});
+const [a,b,c,d]=await Promise.all([sb.from("mp_series").select(SC).eq("published",true).order("created_at",{ascending:false}),sb.from("mp_episodes").select(EC).eq("published",true).order("created_at",{ascending:false}),sb.from("mp_categories").select("*").order("sort"),sb.from("mp_settings").select("*")]);
+let A=a,B=b;if(a.error||b.error){[A,B]=await Promise.all([sb.from("mp_series").select("*").eq("published",true).order("created_at",{ascending:false}),sb.from("mp_episodes").select("*").eq("published",true).order("created_at",{ascending:false})])}
+const er=[A,B,c,d].find(x=>x.error);if(er)throw er.error;
+SER=A.data;EPS=B.data;CATS=c.data;d.data.forEach(r=>{if(r.value!=="")S[r.key]=r.value;else if(r.key in D)S[r.key]=D[r.key];else delete S[r.key]});
 }catch(err){let ok=0;try{const r=await fetch("data.json?"+Date.now());if(!r.ok)throw 0;const j=await r.json(),pub=x=>x.published!==false,ds=(x,y)=>String(y.created_at).localeCompare(String(x.created_at));SER=(j.series||[]).filter(pub).sort(ds);EPS=(j.episodes||[]).filter(pub).sort(ds);CATS=(j.categories||[]).sort((x,y)=>x.sort-y.sort);(j.settings||[]).forEach(r=>{if(r.value!=="")S[r.key]=r.value});ok=1}catch(e2){}
 if(!ok)throw err}
 };
-const render=()=>{$$("script[type='application/ld+json']").forEach(x=>x.remove());S.site_name=String(S.site_name||"").replace(/\s*official\s*$/i,"").trim()||"Muhafiz Playz";theme();chrome();if(S.noindex==="1")meta("robots","noindex,nofollow");
+const render=async()=>{$$("script[type='application/ld+json']").forEach(x=>x.remove());S.site_name=String(S.site_name||"").replace(/\s*official\s*$/i,"").trim()||"Muhafiz Playz";theme();chrome();if(S.noindex==="1")meta("robots","noindex,nofollow");
 if(S.maintenance==="1"){app.innerHTML=`<div class="mm"><h1>${esc(S.site_name)} Official</h1><p>${esc(S.maintenance_msg||"We are performing maintenance. Please check back soon.")}</p></div>`;return}
-({home,series,watch,category,search,page}[P]||missing)();if(P==="watch"||P==="series")joinPopup();fx();
+await ({home,series,watch,category,search,page}[P]||missing)();if(P==="watch"||P==="series")joinPopup();fx();
 $$(".adraw").forEach(x=>x.append(frag(S["ad_html_"+x.dataset.r])));
 if(S.adsense_client)$$(".adsbygoogle").forEach(()=>{try{(window.adsbygoogle=window.adsbygoogle||[]).push({})}catch(e){}});
 };
