@@ -288,3 +288,35 @@ footer.ft a.so:hover{transform:translateY(-4px) rotate(-4deg);box-shadow:0 10px 
 .trb{max-width:820px;margin-left:auto;margin-right:auto}
 .trb .player{width:100%;aspect-ratio:16/9;border-radius:12px;min-height:170px}
 @media(max-width:600px){.trb{margin-left:-14px;margin-right:-14px;padding:14px 8px}.trb h2{padding-left:6px}.trb .trt{padding-left:4px}}
+
+/* ===== Build 31: bigger header, theme switch in menu, full-screen blur search ===== */
+#hdr .hd{padding:14px 16px}
+#hdr .hd.sc{padding:14px 16px}
+#hdr .hd .brand img,#hdr .hd.sc .brand img{width:46px;height:46px}
+#hdr .hd .bt b{font-size:1.15rem;letter-spacing:.1em}
+#hdr .hd .bt b.pz{letter-spacing:.1em}
+#hdr .hd button{width:46px;height:46px;border-radius:14px}
+#hdr .hd::before,#hdr .hd::after{content:none;animation:none}
+@media(max-width:380px){#hdr .hd{padding:12px}#hdr .hd.sc{padding:12px}#hdr .hd .brand img,#hdr .hd.sc .brand img{width:42px;height:42px}#hdr .hd .bt b{font-size:1rem;letter-spacing:.06em}#hdr .hd .bt b.pz{letter-spacing:.06em}#hdr .hd button{width:42px;height:42px}}
+/* theme switch inside menu */
+.dr .cats a#tm{display:flex;align-items:center;justify-content:space-between}
+.sw{flex:none;width:46px;height:28px;border-radius:99px;background:rgba(255,255,255,.18);position:relative;transition:background .3s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.4);transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.lt .sw{background:linear-gradient(135deg,#ffe066,#ff7a00)}
+.lt .sw::after{transform:translateX(18px)}
+/* full-screen blur search */
+html.sfo{overflow:hidden}
+form.sf{display:none;position:fixed;inset:0;z-index:60;margin:0;padding:calc(env(safe-area-inset-top,0px) + 16px) 14px 14px;border:0;background:rgba(8,6,14,.5);-webkit-backdrop-filter:blur(26px) saturate(170%);backdrop-filter:blur(26px) saturate(170%);overflow:auto}
+form.sf.on{display:flex;flex-wrap:wrap;align-content:flex-start;align-items:center;gap:12px;animation:sfin .3s ease both}
+@keyframes sfin{from{opacity:0}to{opacity:1}}
+form.sf input{flex:1;min-width:0;height:52px;margin:0;border-radius:16px;padding:0 16px 0 48px;font-size:1.05rem;color:var(--txt);background:rgba(255,255,255,.1) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='%23ffb000' stroke-width='2.4' stroke-linecap='round'><circle cx='11' cy='11' r='7'/><path d='m20 20-4-4'/></svg>") no-repeat 16px center;border:1px solid rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 10px 30px rgba(0,0,0,.3);outline:none;transition:border-color .2s,box-shadow .2s}
+form.sf input:focus{border-color:rgba(255,176,0,.7);box-shadow:0 0 0 4px rgba(255,176,0,.15),0 10px 30px rgba(0,0,0,.3)}
+form.sf input::placeholder{color:rgba(255,255,255,.5)}
+.sfx{flex:none;background:none;border:0;color:#ffb000;font:700 1rem Outfit,sans-serif;padding:10px 4px;cursor:pointer}
+form.sf .sug{position:static;left:auto;right:auto;top:auto;width:100%;flex-basis:100%;max-height:none;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);box-shadow:0 14px 40px rgba(0,0,0,.35)}
+form.sf .sug .nr.sh{padding:8px 10px 4px;text-align:left;font:700 .8rem Outfit,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#ffb000}
+.lt form.sf{background:rgba(245,240,232,.55)}
+.lt form.sf input{background-color:rgba(255,255,255,.85);border-color:rgba(0,0,0,.1)}
+.lt form.sf input::placeholder{color:rgba(0,0,0,.45)}
+.lt form.sf .sug{background:rgba(255,255,255,.75);border-color:rgba(0,0,0,.08)}
+@media(prefers-reduced-motion:reduce){form.sf.on{animation:none}}
