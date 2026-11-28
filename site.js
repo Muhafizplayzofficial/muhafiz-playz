@@ -161,7 +161,7 @@ $("#ftr").innerHTML=`<footer class="ft"><div class="ftb"><span class="fl"><img s
 ${wa||S.telegram?`<div class="fcom"><h4>Community</h4><p>Follow official episode announcements in our community.</p><p class="fur">نئی اقساط کی اطلاعات کے لیے ہماری کمیونٹی جوائن کریں۔</p>${wa?`<a class="ftj" href="${esc(wa)}" target="_blank" rel="noopener"><span>Join ${esc(S.site_name)} Community</span>${ar}</a>`:""}${S.telegram?`<a class="ftj tg" href="${esc(S.telegram)}" target="_blank" rel="noopener"><span>Join on Telegram</span>${ar}</a>`:""}</div>`:""}
 ${soc?`<div class="fso">${soc}</div>`:""}
 ${S.email?`<p class="fmail">Support Email: <a href="mailto:${esc(S.email)}">${esc(S.email)}</a></p>`:""}${S.footer_text?`<p class="fmail">${esc(S.footer_text)}</p>`:""}
-<p class="fcp">© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p class="fbd">Build 31</p></footer>`;
+<p class="fcp">© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p class="fbd">Build 32</p></footer>`;
 }
 const share=()=>{if(!T("show_share"))return"";const u=encodeURIComponent(location.href),t=encodeURIComponent(document.title);return`<div class="share"><a href="https://www.facebook.com/sharer/sharer.php?u=${u}" target="_blank" rel="noopener">Facebook</a><a href="https://twitter.com/intent/tweet?url=${u}&text=${t}" target="_blank" rel="noopener">X</a><a href="https://wa.me/?text=${t}%20${u}" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/share/url?url=${u}&text=${t}" target="_blank" rel="noopener">Telegram</a></div>`};
 
@@ -240,6 +240,12 @@ const er=q?EPS.filter(e=>{const s=sOf(e.series_id);return s&&norm(eTitle(e,s)).i
 app.innerHTML=`<h1>Search results</h1>${!q?'<p class="muted">Type a name in the search box above.</p>':!sr.length&&!er.length?`<div class="box"><p>No results found for “${esc(raw)}”. Try another name.</p></div>`:""}${sr.length?`<section class="sec"><h2>Series</h2>${grid(sr)}</section>`:""}${er.length?`<section class="sec"><h2>Episodes</h2>${rows(er)}</section>`:""}`;
 }
 
+function contactBtns(){const ic={m:'<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg>',w:'<svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.600 15.100L2 22l5-1.300A10 10 0 1 0 12 2zm5.200 14.100c-.2.600-1.200 1.200-1.700 1.200-.4.100-1 .1-1.600-.1-.4-.1-.9-.3-1.500-.6-2.600-1.100-4.300-3.700-4.400-3.900-.1-.2-1-1.300-1-2.500s.6-1.800.9-2c.2-.2.500-.3.700-.3h.5c.2 0 .4 0 .6.500l.8 1.900c.1.200.1.400 0 .5l-.3.500-.4.400c-.1.100-.3.300-.1.500.2.300.7 1.200 1.500 1.900 1 .9 1.900 1.200 2.200 1.300.3.100.4.100.6-.1l.8-1c.2-.2.400-.2.600-.1l1.800.9c.3.100.4.200.5.300.1.200.1.700-.1 1.300z"/></svg>',t:'<svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M21.500 3.500 2.800 10.700c-.8.300-.8 1.300 0 1.600l4.700 1.500 1.800 5.600c.2.600.9.800 1.400.4l2.600-2.200 4.600 3.400c.5.400 1.300.1 1.400-.6l3.300-15.600c.2-.8-.5-1.400-1.100-1.300zM9.800 14l8-5.800-6.200 6.800-.3 3.100z"/></svg>'};
+const b=[];const em=String(S.email||"").trim();if(em)b.push(`<a class="cbtn cm" href="mailto:${esc(em)}?subject=${encodeURIComponent("Message from "+S.site_name)}">${ic.m}<span><b>Send us an Email</b><small>${esc(em)}</small></span></a>`);
+let n=String(S.whatsapp||"").replace(/[^\d]/g,"");if(n.startsWith("00"))n=n.slice(2);else if(n.startsWith("0")&&n.length===11)n="92"+n.slice(1);
+if(n.length>=8)b.push(`<a class="cbtn cw" href="https://wa.me/${n}?text=${encodeURIComponent("Assalam o Alaikum, I am contacting you from "+S.site_name+".")}" target="_blank" rel="noopener">${ic.w}<span><b>Message on WhatsApp</b><small>+${n}</small></span></a>`);
+const tg=String(S.telegram||"").trim();if(/^https?:\/\//i.test(tg))b.push(`<a class="cbtn ct" href="${esc(tg)}" target="_blank" rel="noopener">${ic.t}<span><b>Join us on Telegram</b><small>${esc(tg.replace(/^https?:\/\//i,""))}</small></span></a>`);
+return b.length?`<div class="cbtns">${b.join("")}</div>`:""}
 function pageText(k){const n=S.site_name+" Official",c=[S.email&&`Email: ${S.email}`,S.whatsapp&&`WhatsApp: ${S.whatsapp}`,S.telegram&&`Telegram: ${S.telegram}`].filter(Boolean).join("\n");
 return({
 about:["About Us",`## Who we are\n${n} is a drama and series website made for viewers who enjoy historical and epic stories with Urdu subtitles. Our goal is simple: keep every series organized in one place, with clear episode lists, helpful details and easy access.\n\n## What you will find here\n- Series pages with full story details\n- Episode pages with multiple servers\n- Download links in several qualities\n- Regular updates as new episodes arrive\n\n## Our promise\nWe work to keep the site fast, clean and easy to use on every phone and computer. If you have suggestions, please contact us.`],
@@ -252,7 +258,7 @@ function page(){
 const k=qs.get("p")||"about";if(k==="request")return requestPage();const d=pageText(k);if(!d)return missing();
 const t=S["page_"+k]?[d[0],S["page_"+k]]:d;
 seo(`${t[0]}${sfx()}`,plain(t[1],155));
-app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / ${esc(t[0])}</div><section class="box prose"><h1>${esc(t[0])}</h1>${md(t[1])}</section>`;
+app.innerHTML=`<div class="crumb"><a href="index.html">Home</a> / ${esc(t[0])}</div><section class="box prose"><h1>${esc(t[0])}</h1>${k==="contact"?contactBtns():""}${md(t[1])}</section>`;
 }
 
 const SC="id,title,slug,category,year,status,poster,banner,featured,published,popular,meta_title,meta_desc,tags,trailer,created_at",EC="id,series_id,season,number,title,thumb,release_at,created_at,published",DESC={},FULL={};

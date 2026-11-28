@@ -320,3 +320,17 @@ form.sf .sug .nr.sh{padding:8px 10px 4px;text-align:left;font:700 .8rem Outfit,s
 .lt form.sf input::placeholder{color:rgba(0,0,0,.45)}
 .lt form.sf .sug{background:rgba(255,255,255,.75);border-color:rgba(0,0,0,.08)}
 @media(prefers-reduced-motion:reduce){form.sf.on{animation:none}}
+
+/* ===== Build 32: contact buttons ===== */
+.cbtns{display:grid;gap:12px;margin:18px 0 10px}
+.cbtn{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:18px;color:#fff;border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 10px 26px rgba(0,0,0,.3);transition:transform .25s cubic-bezier(.34,1.56,.64,1),filter .2s;text-decoration:none}
+.cbtn:active{transform:scale(.97)}
+.cbtn svg{flex:none}
+.cbtn span{min-width:0}
+.cbtn b{display:block;font:800 1.08rem Outfit,sans-serif;color:#fff}
+.cbtn small{display:block;margin-top:2px;font-size:.84rem;color:rgba(255,255,255,.85);overflow-wrap:anywhere}
+.cbtn.cm{background:linear-gradient(135deg,#ffb000,#ff7a00);color:#1a1200}
+.cbtn.cm b{color:#1a1200}.cbtn.cm small{color:rgba(26,18,0,.8)}
+.cbtn.cw{background:linear-gradient(135deg,#25d366,#128c7e)}
+.cbtn.ct{background:linear-gradient(135deg,#2aabee,#1c7fc4)}
+@media(hover:hover){.cbtn:hover{filter:brightness(1.08)}}
