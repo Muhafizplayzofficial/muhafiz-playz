@@ -284,3 +284,7 @@ footer.ft a.so:hover{transform:translateY(-4px) rotate(-4deg);box-shadow:0 10px 
 .trt button.on{background:linear-gradient(135deg,#ffe066,#ff7a00);color:#1a1200;border-color:transparent}
 .trl .tb button.on{background:#ff7a00;color:#111}
 @media(prefers-reduced-motion:reduce){#hdr .hd::after,#hdr .hd .brand img,#hdr .hd .bt b.pz,.splash::before,.splash img,.splash .sk::after{animation:none}}
+/* Build 30: bigger, steadier trailer player */
+.trb{max-width:820px;margin-left:auto;margin-right:auto}
+.trb .player{width:100%;aspect-ratio:16/9;border-radius:12px;min-height:170px}
+@media(max-width:600px){.trb{margin-left:-14px;margin-right:-14px;padding:14px 8px}.trb h2{padding-left:6px}.trb .trt{padding-left:4px}}
