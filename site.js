@@ -50,7 +50,7 @@ const sUrl=s=>`series.html?s=${encodeURIComponent(s.slug)}`,eUrl=e=>`watch.html?
 const eTitle=(e,s)=>e.title||`${s.title} Episode ${e.number}`;
 const soon=e=>e&&e.release_at&&new Date(e.release_at)>new Date();
 const yt=u=>{const m=String(u||"").match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);return m?`https://www.youtube.com/embed/${m[1]}`:u};
-const trailerBox=u=>u?`<div class="inner"><h2>Watch Trailer</h2><iframe class="player" src="${esc(yt(u))}" allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`:"";
+const trailerBox=u=>{const L=String(u||"").split(/\s+/).filter(Boolean);if(!L.length)return"";const tabs=L.length>1?`<div class="trt">${L.map((x,i)=>`<button type="button" data-src="${esc(yt(x))}" class="${i?"":"on"}">Trailer ${i+1}</button>`).join("")}</div>`:"";return `<div class="inner"><h2>Watch Trailer</h2>${tabs}<iframe class="player" src="${esc(yt(L[0]))}" allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`};
 const pad=n=>String(n).padStart(2,"0");
 const frag=h=>document.createRange().createContextualFragment(h);
 const meta=(k,v,p)=>{let e=$(`meta[${p?"property":"name"}="${k}"]`);if(!e){e=document.createElement("meta");e.setAttribute(p?"property":"name",k);document.head.appendChild(e)}e.content=v};
@@ -110,6 +110,7 @@ $$("[data-j]",el).forEach(a=>a.addEventListener("click",()=>close(1)));$("#jk").
 function fx(){
 if(!$("#sp")){const p=document.createElement("div");p.id="sp";document.body.appendChild(p);const b=document.createElement("button");b.id="bt";b.setAttribute("aria-label","Back to top");b.innerHTML="&#8593;";b.onclick=()=>scrollTo({top:0,behavior:"smooth"});document.body.appendChild(b);
 addEventListener("scroll",()=>{const h=document.documentElement,t=h.scrollTop,m=h.scrollHeight-h.clientHeight;p.style.width=(m>0?t/m*100:0)+"%";b.classList.toggle("on",t>700);const hd=$("#hdr .hd");if(hd)hd.classList.toggle("sc",t>12)},{passive:true});
+document.addEventListener("click",e=>{const b=e.target.closest(".trt button");if(!b)return;const w=b.closest(".inner"),f=w&&w.querySelector("iframe");if(!f)return;f.src=b.dataset.src;w.querySelectorAll(".trt button").forEach(x=>x.classList.toggle("on",x===b))});
 document.addEventListener("pointerdown",e=>{const t=e.target.closest(".btn,.eps a");if(!t||!document.body.classList.contains("fx"))return;const r=t.getBoundingClientRect(),z=Math.max(r.width,r.height)*2,x=document.createElement("span");x.className="rip";x.style.cssText=`width:${z}px;height:${z}px;left:${e.clientX-r.left-z/2}px;top:${e.clientY-r.top-z/2}px`;t.appendChild(x);setTimeout(()=>x.remove(),650)},{passive:true});
 document.addEventListener("click",e=>{const a=e.target.closest("a[href]");if(!a||e.defaultPrevented||e.button||e.ctrlKey||e.metaKey||e.shiftKey||a.target||a.hasAttribute("download"))return;const h=a.getAttribute("href");if(!h||h[0]==="#"||/^(mailto|tel|javascript)/i.test(h)||a.origin!==location.origin)return;e.preventDefault();document.body.classList.add("leave");setTimeout(()=>{location.href=a.href},170)});
 addEventListener("pageshow",()=>document.body.classList.remove("leave"))}
@@ -158,7 +159,7 @@ $("#ftr").innerHTML=`<footer class="ft"><div class="ftb"><span class="fl"><img s
 ${wa||S.telegram?`<div class="fcom"><h4>Community</h4><p>Follow official episode announcements in our community.</p><p class="fur">نئی اقساط کی اطلاعات کے لیے ہماری کمیونٹی جوائن کریں۔</p>${wa?`<a class="ftj" href="${esc(wa)}" target="_blank" rel="noopener"><span>Join ${esc(S.site_name)} Community</span>${ar}</a>`:""}${S.telegram?`<a class="ftj tg" href="${esc(S.telegram)}" target="_blank" rel="noopener"><span>Join on Telegram</span>${ar}</a>`:""}</div>`:""}
 ${soc?`<div class="fso">${soc}</div>`:""}
 ${S.email?`<p class="fmail">Support Email: <a href="mailto:${esc(S.email)}">${esc(S.email)}</a></p>`:""}${S.footer_text?`<p class="fmail">${esc(S.footer_text)}</p>`:""}
-<p class="fcp">© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p class="fbd">Build 28</p></footer>`;
+<p class="fcp">© ${new Date().getFullYear()} ${esc(S.site_name)} Official. All rights reserved.</p><p class="fbd">Build 29</p></footer>`;
 }
 const share=()=>{if(!T("show_share"))return"";const u=encodeURIComponent(location.href),t=encodeURIComponent(document.title);return`<div class="share"><a href="https://www.facebook.com/sharer/sharer.php?u=${u}" target="_blank" rel="noopener">Facebook</a><a href="https://twitter.com/intent/tweet?url=${u}&text=${t}" target="_blank" rel="noopener">X</a><a href="https://wa.me/?text=${t}%20${u}" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/share/url?url=${u}&text=${t}" target="_blank" rel="noopener">Telegram</a></div>`};
 
